@@ -1,0 +1,23 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "HotelInventory.Models/1.0.0": {
+        "runtime": {
+          "HotelInventory.Models.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "HotelInventory.Models/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
