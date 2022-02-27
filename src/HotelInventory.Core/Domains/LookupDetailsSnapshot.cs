@@ -16,6 +16,10 @@ namespace HotelInventory.Core.Domains
         #endregion Constructor
 
         #region Property   
+        [Column("LookupTypeParentId")]
+        public int LookupTypeParentId { get; set; }
+        [Column("LookupTypeParentName")]
+        public string LookupTypeParentName { get; set; }
         [Column("LookupTypeId")]
         public int LookupTypeId { get; set; }
         [Column("LookupType")]
