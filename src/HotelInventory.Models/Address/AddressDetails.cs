@@ -9,10 +9,14 @@ namespace HotelInventory.Models.Address
         public string Country { get; set; }
         public string City { get; set; }
         public string State { get; set; }
-        public string Pincode { get; set; }
+        public int Pincode { get; set; }
+
         #region owner upload only
         public List<int> AreaIds { get; set; }
+        public string PostOffice { get; set; }
         public string Landmark { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         #endregion
     }
 }

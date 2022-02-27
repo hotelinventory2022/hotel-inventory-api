@@ -1,4 +1,5 @@
 ﻿using HotelInventory.Models.Address;
+using System;
 using System.Collections.Generic;
 
 namespace HotelInventory.Models.Property
@@ -9,6 +10,7 @@ namespace HotelInventory.Models.Property
         public int PropertySubTypeId { get; set; }
         public int OwnerId { get; set; }
         public string PropertyName { get; set; }
+        public string PropertyDescription { get; set; }
         public string PropertyRating { get; set; }
         public string PropertyContactName { get; set; }
         public string PropertyContactEmail { get; set; }
@@ -24,10 +26,13 @@ namespace HotelInventory.Models.Property
         public double PropertyCommission { get; set; }
         public bool PropertyTnCAccepted { get; set; }
         public AddressDetails PropertyAddress { get; set; }
+        public int LoggedInUserId { get; set; } 
+        public DateTime PropertyPublishDate { get; set; }
     }
 
     public class PropertyRoomUploadDetails
     {
+        public string PropertyRoomName { get; set; }
         public int PropertyRoomTypeId { get; set; }
         public int PropertyRoomSubTypeId { get; set; }
         public List<int> PropertyRoomFaciltyIds { get; set; }
@@ -38,5 +43,6 @@ namespace HotelInventory.Models.Property
         public List<string> PropertyRoomImagesUrls { get; set; }
         public string RoomCheckInTime { get; set; }
         public string RoomCheckOutTime { get; set; }
+        public bool SlotBookingEnabled { get; set; }
     }
 }

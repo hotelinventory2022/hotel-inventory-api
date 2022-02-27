@@ -42,11 +42,27 @@ namespace HotelInventory.WebApi.Infrastructure
         {
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ILookupDetailsRepository, LookupDetailsRepository>();
+            services.AddScoped<IAddressRepository, AddressRepository>();
+            services.AddScoped<IGoogleMapDetailsRepository, GoogleMapDetailsRepository>();
+            services.AddScoped<IPropertyFacilityMappingRepository, PropertyFacilityMappingRepository>();
+            services.AddScoped<IPropertyImageMappingRepository, PropertyImageMappingRepository>();
+            services.AddScoped<IPropertyPolicyMappingRepository, PropertyPolicyMappingRepository>();
+            services.AddScoped<IPropertyRepository, PropertyRepository>();
+            services.AddScoped<IRoomFacilityMappingRepository, RoomFacilityMappingRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
         }
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<ILookupDetailsService, LookupDetailsService>();
+            services.AddScoped<IAddressService, AddressService>();
+            services.AddScoped<IGoogleMapDetailsService, GoogleMapDetailsService>();
+            services.AddScoped<IPropertyFacilityMappingService, PropertyFacilityMappingService>();
+            services.AddScoped<IPropertyImageMappingService, PropertyImageMappingService>();
+            services.AddScoped<IPropertyPolicyMappingService, PropertyPolicyMappingService>();
+            services.AddScoped<IPropertyService, PropertyService>();
+            services.AddScoped<IRoomFacilityMappingService, RoomFacilityMappingService>();
+            services.AddScoped<IRoomService, RoomService>();
         }
     }
 }
