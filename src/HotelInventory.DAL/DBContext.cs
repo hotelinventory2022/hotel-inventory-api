@@ -23,6 +23,7 @@ namespace HotelInventory.DAL
         public DbSet<AddressSnapshot> Addresses { get; set; }
         public DbSet<RoomSnapshot> Rooms { get; set; }
         public DbSet<PropertySnapshot> Properties { get; set; }
+        public DbSet<UserSnapshot> Users { get; set; }
 
     }
 }

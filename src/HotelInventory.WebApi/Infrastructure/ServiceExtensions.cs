@@ -50,6 +50,7 @@ namespace HotelInventory.WebApi.Infrastructure
             services.AddScoped<IPropertyRepository, PropertyRepository>();
             services.AddScoped<IRoomFacilityMappingRepository, RoomFacilityMappingRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
         public static void ConfigureServices(this IServiceCollection services)
         {
@@ -63,6 +64,7 @@ namespace HotelInventory.WebApi.Infrastructure
             services.AddScoped<IPropertyService, PropertyService>();
             services.AddScoped<IRoomFacilityMappingService, RoomFacilityMappingService>();
             services.AddScoped<IRoomService, RoomService>();
+            services.AddScoped<IUserService, UserService>();
         }
     }
 }

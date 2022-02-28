@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
@@ -24,6 +25,7 @@ namespace HotelInventory.Core.Domains
         public int LookupTypeId { get; set; }
         [Column("LookupType")]
         public string LookupType { get; set; }
+        [Key]
         [Column("LookupId")]
         public int LookupId { get; set; }
         [Column("Lookup")]
