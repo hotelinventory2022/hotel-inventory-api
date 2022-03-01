@@ -113,7 +113,7 @@ namespace HotelInventory.Services.Implementation
                     var roleEntity = _mapper.Map<RoleSnapshot>(Role);
                     await _roleRepo.CreateRole(roleEntity);
                     createdRole = _mapper.Map<RoleDto>(roleEntity);
-                    _logger.LogError($"Succesfully created Role with id {roleEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created Role with id {roleEntity.Id.ToString()}.");
                     return new ApiResponse<RoleDto> { Data = createdRole, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {roleEntity.Id.ToString()}." };
                 }
                 else
@@ -130,7 +130,7 @@ namespace HotelInventory.Services.Implementation
         }
         public async Task<ApiResponse<RoleDto>> UpdateRole(RoleDto Role)
         {
-            RoleDto updatedTole = null;
+            RoleDto updatedObj = null;
             try
             {
                 if (Role == null)
@@ -142,10 +142,10 @@ namespace HotelInventory.Services.Implementation
                 var roleEntity = _mapper.Map<RoleSnapshot>(Role);
 
                 await _roleRepo.UpdateRole(roleEntity);
-                updatedTole = _mapper.Map<RoleDto>(roleEntity);
+                updatedObj = _mapper.Map<RoleDto>(roleEntity);
 
-                _logger.LogError($"Succesfully updated Role object with id {roleEntity.Id.ToString()}.");
-                return new ApiResponse<RoleDto> { Data = updatedTole, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated Role with id {roleEntity.Id.ToString()}." };
+                _logger.LogInfo($"Succesfully updated Role object with id {roleEntity.Id.ToString()}.");
+                return new ApiResponse<RoleDto> { Data = updatedObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated Role with id {roleEntity.Id.ToString()}." };
             }
             catch (Exception ex)
             {
@@ -168,7 +168,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned role with id: {RoleId}");
                     var roleEntity = _mapper.Map<RoleSnapshot>(role);
                     await _roleRepo.DeleteRole(role);
-                    _logger.LogError($"Succesfully deleted Role object with id {roleEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted Role object with id {roleEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted Role with id {roleEntity.Id.ToString()}." };
                 }
             }

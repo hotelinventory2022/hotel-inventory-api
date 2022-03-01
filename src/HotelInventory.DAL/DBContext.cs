@@ -15,6 +15,15 @@ namespace HotelInventory.DAL
 
         public DbSet<RoleSnapshot> Roles { get; set; }
         public DbSet<LookupDetailsSnapshot> LookupDetails { get; set; }
-        
+        public DbSet<PropertyPolicyMappingSnapshot> PropertyPolicyMappings { get; set; }
+        public DbSet<PropertyImageMappingSnapshot> PropertyImageMappings { get; set; }
+        public DbSet<RoomFacilityMappingSnapshot> RoomFacilityMappings { get; set; }
+        public DbSet<PropertyFacilityMappingSnapshot> PropertyFacilityMappings { get; set; }
+        public DbSet<GoogleMapDetailsSnapshot> GoogleMapDetails { get; set; }
+        public DbSet<AddressSnapshot> Addresses { get; set; }
+        public DbSet<RoomSnapshot> Rooms { get; set; }
+        public DbSet<PropertySnapshot> Properties { get; set; }
+        public DbSet<UserSnapshot> Users { get; set; }
+
     }
 }
