@@ -74,7 +74,7 @@ namespace HotelInventory.Services.Implementation
                     var PropertyPolicyMappingEntity = _mapper.Map<PropertyPolicyMappingSnapshot>(PropertyPolicyMapping);
                     await _repo.CreatePropertyPolicyMapping(PropertyPolicyMappingEntity);
                     createdObj = _mapper.Map<PropertyPolicyMappingDTO>(PropertyPolicyMappingEntity);
-                    _logger.LogError($"Succesfully created PropertyPolicyMapping with id {PropertyPolicyMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created PropertyPolicyMapping with id {PropertyPolicyMappingEntity.Id.ToString()}.");
                     return new ApiResponse<PropertyPolicyMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {PropertyPolicyMappingEntity.Id.ToString()}." };
                 }
                 else
@@ -105,7 +105,7 @@ namespace HotelInventory.Services.Implementation
                 await _repo.UpdatePropertyPolicyMapping(PropertyPolicyMappingEntity);
                 updatedobj = _mapper.Map<PropertyPolicyMappingDTO>(PropertyPolicyMappingEntity);
 
-                _logger.LogError($"Succesfully updated PropertyPolicyMapping object with id {PropertyPolicyMappingEntity.Id.ToString()}.");
+                _logger.LogInfo($"Succesfully updated PropertyPolicyMapping object with id {PropertyPolicyMappingEntity.Id.ToString()}.");
                 return new ApiResponse<PropertyPolicyMappingDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated PropertyPolicyMapping object with id {PropertyPolicyMappingEntity.Id.ToString()}." };
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned PropertyPolicyMapping with id: {PropertyPolicyMappingId}");
                     var PropertyPolicyMappingEntity = _mapper.Map<PropertyPolicyMappingSnapshot>(existingObj);
                     await _repo.DeletePropertyPolicyMapping(PropertyPolicyMappingEntity);
-                    _logger.LogError($"Succesfully deleted PropertyPolicyMapping object with id {PropertyPolicyMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted PropertyPolicyMapping object with id {PropertyPolicyMappingEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted PropertyPolicyMapping with id {PropertyPolicyMappingEntity.Id.ToString()}." };
                 }
             }

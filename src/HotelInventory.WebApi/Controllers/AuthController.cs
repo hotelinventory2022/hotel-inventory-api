@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 
 namespace HotelInventory.WebApi.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/v1/[controller]")]
     public class AuthController : Controller

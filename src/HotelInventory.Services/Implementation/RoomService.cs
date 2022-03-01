@@ -74,7 +74,7 @@ namespace HotelInventory.Services.Implementation
                     var RoomEntity = _mapper.Map<RoomSnapshot>(Room);
                     await _repo.CreateRoom(RoomEntity);
                     createdObj = _mapper.Map<RoomDTO>(RoomEntity);
-                    _logger.LogError($"Succesfully created Room with id {RoomEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created Room with id {RoomEntity.Id.ToString()}.");
                     return new ApiResponse<RoomDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {RoomEntity.Id.ToString()}." };
                 }
                 else
@@ -105,7 +105,7 @@ namespace HotelInventory.Services.Implementation
                 await _repo.UpdateRoom(RoomEntity);
                 updatedobj = _mapper.Map<RoomDTO>(RoomEntity);
 
-                _logger.LogError($"Succesfully updated Room object with id {RoomEntity.Id.ToString()}.");
+                _logger.LogInfo($"Succesfully updated Room object with id {RoomEntity.Id.ToString()}.");
                 return new ApiResponse<RoomDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated Room object with id {RoomEntity.Id.ToString()}." };
             }
             catch (Exception ex)
@@ -130,7 +130,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned Room with id: {RoomId}");
                     var RoomEntity = _mapper.Map<RoomSnapshot>(existingObj);
                     await _repo.DeleteRoom(RoomEntity);
-                    _logger.LogError($"Succesfully deleted Room object with id {RoomEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted Room object with id {RoomEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted Room with id {RoomEntity.Id.ToString()}." };
                 }
             }

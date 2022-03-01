@@ -74,7 +74,7 @@ namespace HotelInventory.Services.Implementation
                     var PropertyImageMappingEntity = _mapper.Map<PropertyImageMappingSnapshot>(PropertyImageMapping);
                     await _repo.CreatePropertyImageMapping(PropertyImageMappingEntity);
                     createdObj = _mapper.Map<PropertyImageMappingDTO>(PropertyImageMappingEntity);
-                    _logger.LogError($"Succesfully created PropertyImageMapping with id {PropertyImageMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created PropertyImageMapping with id {PropertyImageMappingEntity.Id.ToString()}.");
                     return new ApiResponse<PropertyImageMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {PropertyImageMappingEntity.Id.ToString()}." };
                 }
                 else
@@ -105,7 +105,7 @@ namespace HotelInventory.Services.Implementation
         //        await _repo.UpdatePropertyImageMapping(PropertyImageMappingEntity);
         //        updatedobj = _mapper.Map<PropertyImageMappingDTO>(PropertyImageMappingEntity);
 
-        //        _logger.LogError($"Succesfully updated PropertyImageMapping object with id {PropertyImageMappingEntity.Id.ToString()}.");
+        //        _logger.LogInfo($"Succesfully updated PropertyImageMapping object with id {PropertyImageMappingEntity.Id.ToString()}.");
         //        return new ApiResponse<PropertyImageMappingDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated PropertyImageMapping object with id {PropertyImageMappingEntity.Id.ToString()}." };
         //    }
         //    catch (Exception ex)
@@ -130,7 +130,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned PropertyImageMapping with id: {PropertyImageMappingId}");
                     var PropertyImageMappingEntity = _mapper.Map<PropertyImageMappingSnapshot>(existingObj);
                     await _repo.DeletePropertyImageMapping(PropertyImageMappingEntity);
-                    _logger.LogError($"Succesfully deleted PropertyImageMapping object with id {PropertyImageMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted PropertyImageMapping object with id {PropertyImageMappingEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted PropertyImageMapping with id {PropertyImageMappingEntity.Id.ToString()}." };
                 }
             }

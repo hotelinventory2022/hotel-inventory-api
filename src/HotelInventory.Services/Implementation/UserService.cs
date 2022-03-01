@@ -19,6 +19,8 @@ namespace HotelInventory.Services.Implementation
 {
     public class UserService : IUserService
     {
+        private DateTime now = DateTime.Now;
+
         private ILoggerManager _logger;
         private IMapper _mapper;
         private IUserRepository _repo;
@@ -63,7 +65,7 @@ namespace HotelInventory.Services.Implementation
                     var UserEntity = _mapper.Map<UserSnapshot>(user);
                     await _repo.CreateUser(UserEntity);
                     createdObj = _mapper.Map<UserDTO>(UserEntity);
-                    _logger.LogError($"Succesfully created User with id {UserEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created User with id {UserEntity.Id.ToString()}.");
                     return new ApiResponse<UserDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created User with id {UserEntity.Id.ToString()}." };
                 }
                 else
@@ -94,7 +96,7 @@ namespace HotelInventory.Services.Implementation
                 await _repo.UpdateUser(UserEntity);
                 updatedobj = _mapper.Map<UserDTO>(UserEntity);
 
-                _logger.LogError($"Succesfully updated User object with id {UserEntity.Id.ToString()}.");
+                _logger.LogInfo($"Succesfully updated User object with id {UserEntity.Id.ToString()}.");
                 return new ApiResponse<UserDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated User object with id {UserEntity.Id.ToString()}." };
             }
             catch (Exception ex)
@@ -119,7 +121,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned User with id: {UserId}");
                     var UserEntity = _mapper.Map<UserSnapshot>(existingObj);
                     await _repo.DeleteUser(UserEntity);
-                    _logger.LogError($"Succesfully deleted User object with id {UserEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted User object with id {UserEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted User with id {UserEntity.Id.ToString()}." };
                 }
             }
@@ -167,6 +169,7 @@ namespace HotelInventory.Services.Implementation
         }
         public async Task<ApiResponse<UserDTO>> RegisterUser(RegisterRequest request)
         {
+            int loggedInUser = 1;
             UserDTO createdObj = null;
             try
             {
@@ -186,8 +189,6 @@ namespace HotelInventory.Services.Implementation
                         _logger.LogError($"Password doesn't conform with password policy.");
                         return new ApiResponse<UserDTO> { Data = null, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"Password doesn't conform with password policy." };
                     }
-                    var now = DateTime.Now;
-                    var loggedInUser = 1;
                     
                     var userRequest = new UserDTO
                     {

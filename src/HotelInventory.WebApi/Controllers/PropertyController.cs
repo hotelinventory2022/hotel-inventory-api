@@ -1,6 +1,7 @@
 ﻿using HotelInventory.Models;
 using HotelInventory.Models.Property;
 using HotelInventory.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,6 +22,8 @@ namespace HotelInventory.WebApi.Controllers
             _logger = logger;
             _propertyService = propertyService;
         }
+
+        [Authorize]
         [HttpPost]
         [Route("UploadPropertyByOwner")]
         public async Task<ApiResponse<bool>> Create([FromBody] PropertyUploadRequestModel property)

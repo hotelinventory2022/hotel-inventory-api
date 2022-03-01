@@ -57,7 +57,7 @@ namespace HotelInventory.Services.Implementation
                     var GoogleMapDetailsEntity = _mapper.Map<GoogleMapDetailsSnapshot>(GoogleMapDetails);
                     await _repo.CreateGoogleMapDetails(GoogleMapDetailsEntity);
                     createdObj = _mapper.Map<GoogleMapDetailsDto>(GoogleMapDetailsEntity);
-                    _logger.LogError($"Succesfully created GoogleMapDetails with id {GoogleMapDetailsEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created GoogleMapDetails with id {GoogleMapDetailsEntity.Id.ToString()}.");
                     return new ApiResponse<GoogleMapDetailsDto> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {GoogleMapDetailsEntity.Id.ToString()}." };
                 }
                 else
@@ -88,7 +88,7 @@ namespace HotelInventory.Services.Implementation
                 await _repo.UpdateGoogleMapDetails(GoogleMapDetailsEntity);
                 updatedobj = _mapper.Map<GoogleMapDetailsDto>(GoogleMapDetailsEntity);
 
-                _logger.LogError($"Succesfully updated GoogleMapDetails object with id {GoogleMapDetailsEntity.Id.ToString()}.");
+                _logger.LogInfo($"Succesfully updated GoogleMapDetails object with id {GoogleMapDetailsEntity.Id.ToString()}.");
                 return new ApiResponse<GoogleMapDetailsDto> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated GoogleMapDetails object with id {GoogleMapDetailsEntity.Id.ToString()}." };
             }
             catch (Exception ex)
@@ -113,7 +113,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned GoogleMapDetails with id: {GoogleMapDetailsId}");
                     var GoogleMapDetailsEntity = _mapper.Map<GoogleMapDetailsSnapshot>(existingObj);
                     await _repo.DeleteGoogleMapDetails(GoogleMapDetailsEntity);
-                    _logger.LogError($"Succesfully deleted GoogleMapDetails object with id {GoogleMapDetailsEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted GoogleMapDetails object with id {GoogleMapDetailsEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted GoogleMapDetails with id {GoogleMapDetailsEntity.Id.ToString()}." };
                 }
             }

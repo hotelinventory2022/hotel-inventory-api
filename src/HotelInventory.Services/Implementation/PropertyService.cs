@@ -97,7 +97,7 @@ namespace HotelInventory.Services.Implementation
                     var PropertyEntity = _mapper.Map<PropertySnapshot>(Property);
                     await _repo.CreateProperty(PropertyEntity);
                     createdObj = _mapper.Map<PropertyDTO>(PropertyEntity);
-                    _logger.LogError($"Succesfully created Property with id {PropertyEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created Property with id {PropertyEntity.Id.ToString()}.");
                     return new ApiResponse<PropertyDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {PropertyEntity.Id.ToString()}." };
                 }
                 else
@@ -128,7 +128,7 @@ namespace HotelInventory.Services.Implementation
                 await _repo.UpdateProperty(PropertyEntity);
                 updatedobj = _mapper.Map<PropertyDTO>(PropertyEntity);
 
-                _logger.LogError($"Succesfully updated Property object with id {PropertyEntity.Id.ToString()}.");
+                _logger.LogInfo($"Succesfully updated Property object with id {PropertyEntity.Id.ToString()}.");
                 return new ApiResponse<PropertyDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated Property object with id {PropertyEntity.Id.ToString()}." };
             }
             catch (Exception ex)
@@ -153,7 +153,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned Property with id: {PropertyId}");
                     var PropertyEntity = _mapper.Map<PropertySnapshot>(existingObj);
                     await _repo.DeleteProperty(PropertyEntity);
-                    _logger.LogError($"Succesfully deleted Property object with id {PropertyEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted Property object with id {PropertyEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted Property with id {PropertyEntity.Id.ToString()}." };
                 }
             }
@@ -347,7 +347,7 @@ namespace HotelInventory.Services.Implementation
                     }
 
                     
-                    _logger.LogError($"Succesfully created Property with id {createdProperty.Result.Data.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created Property with id {createdProperty.Result.Data.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {createdProperty.Result.Data.Id.ToString()}." };
                 }
                 else

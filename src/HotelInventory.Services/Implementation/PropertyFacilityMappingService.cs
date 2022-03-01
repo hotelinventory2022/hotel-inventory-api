@@ -74,7 +74,7 @@ namespace HotelInventory.Services.Implementation
                     var PropertyFacilityMappingEntity = _mapper.Map<PropertyFacilityMappingSnapshot>(PropertyFacilityMapping);
                     await _repo.CreatePropertyFacilityMapping(PropertyFacilityMappingEntity);
                     createdObj = _mapper.Map<PropertyFacilityMappingDTO>(PropertyFacilityMappingEntity);
-                    _logger.LogError($"Succesfully created PropertyFacilityMapping with id {PropertyFacilityMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created PropertyFacilityMapping with id {PropertyFacilityMappingEntity.Id.ToString()}.");
                     return new ApiResponse<PropertyFacilityMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {PropertyFacilityMappingEntity.Id.ToString()}." };
                 }
                 else
@@ -105,7 +105,7 @@ namespace HotelInventory.Services.Implementation
         //        await _repo.UpdatePropertyFacilityMapping(PropertyFacilityMappingEntity);
         //        updatedobj = _mapper.Map<PropertyFacilityMappingDTO>(PropertyFacilityMappingEntity);
 
-        //        _logger.LogError($"Succesfully updated PropertyFacilityMapping object with id {PropertyFacilityMappingEntity.Id.ToString()}.");
+        //        _logger.LogInfo($"Succesfully updated PropertyFacilityMapping object with id {PropertyFacilityMappingEntity.Id.ToString()}.");
         //        return new ApiResponse<PropertyFacilityMappingDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated PropertyFacilityMapping object with id {PropertyFacilityMappingEntity.Id.ToString()}." };
         //    }
         //    catch (Exception ex)
@@ -130,7 +130,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned PropertyFacilityMapping with id: {PropertyFacilityMappingId}");
                     var PropertyFacilityMappingEntity = _mapper.Map<PropertyFacilityMappingSnapshot>(existingObj);
                     await _repo.DeletePropertyFacilityMapping(PropertyFacilityMappingEntity);
-                    _logger.LogError($"Succesfully deleted PropertyFacilityMapping object with id {PropertyFacilityMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted PropertyFacilityMapping object with id {PropertyFacilityMappingEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted PropertyFacilityMapping with id {PropertyFacilityMappingEntity.Id.ToString()}." };
                 }
             }

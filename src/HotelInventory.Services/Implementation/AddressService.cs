@@ -57,7 +57,7 @@ namespace HotelInventory.Services.Implementation
                     var addressEntity = _mapper.Map<AddressSnapshot>(Address);
                     await _repo.CreateAddress(addressEntity);
                     createdObj = _mapper.Map<AddressDTO>(addressEntity);
-                    _logger.LogError($"Succesfully created Address with id {addressEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created Address with id {addressEntity.Id.ToString()}.");
                     return new ApiResponse<AddressDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {addressEntity.Id.ToString()}." };
                 }
                 else
@@ -88,7 +88,7 @@ namespace HotelInventory.Services.Implementation
                 await _repo.UpdateAddress(addressEntity);
                 updatedobj = _mapper.Map<AddressDTO>(addressEntity);
 
-                _logger.LogError($"Succesfully updated Address object with id {addressEntity.Id.ToString()}.");
+                _logger.LogInfo($"Succesfully updated Address object with id {addressEntity.Id.ToString()}.");
                 return new ApiResponse<AddressDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated Address object with id {addressEntity.Id.ToString()}." };
             }
             catch (Exception ex)
@@ -113,7 +113,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned address with id: {AddressId}");
                     var addressEntity = _mapper.Map<AddressSnapshot>(existingObj);
                     await _repo.DeleteAddress(addressEntity);
-                    _logger.LogError($"Succesfully deleted address object with id {addressEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted address object with id {addressEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted address with id {addressEntity.Id.ToString()}." };
                 }
             }

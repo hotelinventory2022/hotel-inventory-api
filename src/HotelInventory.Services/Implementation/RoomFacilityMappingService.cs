@@ -74,7 +74,7 @@ namespace HotelInventory.Services.Implementation
                     var RoomFacilityMappingEntity = _mapper.Map<RoomFacilityMappingSnapshot>(RoomFacilityMapping);
                     await _repo.CreateRoomFacilityMapping(RoomFacilityMappingEntity);
                     createdObj = _mapper.Map<RoomFacilityMappingDTO>(RoomFacilityMappingEntity);
-                    _logger.LogError($"Succesfully created RoomFacilityMapping with id {RoomFacilityMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully created RoomFacilityMapping with id {RoomFacilityMappingEntity.Id.ToString()}.");
                     return new ApiResponse<RoomFacilityMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {RoomFacilityMappingEntity.Id.ToString()}." };
                 }
                 else
@@ -105,7 +105,7 @@ namespace HotelInventory.Services.Implementation
         //        await _repo.UpdateRoomFacilityMapping(RoomFacilityMappingEntity);
         //        updatedobj = _mapper.Map<RoomFacilityMappingDTO>(RoomFacilityMappingEntity);
 
-        //        _logger.LogError($"Succesfully updated RoomFacilityMapping object with id {RoomFacilityMappingEntity.Id.ToString()}.");
+        //        _logger.LogInfo($"Succesfully updated RoomFacilityMapping object with id {RoomFacilityMappingEntity.Id.ToString()}.");
         //        return new ApiResponse<RoomFacilityMappingDTO> { Data = updatedobj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully updated RoomFacilityMapping object with id {RoomFacilityMappingEntity.Id.ToString()}." };
         //    }
         //    catch (Exception ex)
@@ -130,7 +130,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogInfo($"Returned RoomFacilityMapping with id: {RoomFacilityMappingId}");
                     var RoomFacilityMappingEntity = _mapper.Map<RoomFacilityMappingSnapshot>(existingObj);
                     await _repo.DeleteRoomFacilityMapping(RoomFacilityMappingEntity);
-                    _logger.LogError($"Succesfully deleted RoomFacilityMapping object with id {RoomFacilityMappingEntity.Id.ToString()}.");
+                    _logger.LogInfo($"Succesfully deleted RoomFacilityMapping object with id {RoomFacilityMappingEntity.Id.ToString()}.");
                     return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully deleted RoomFacilityMapping with id {RoomFacilityMappingEntity.Id.ToString()}." };
                 }
             }
