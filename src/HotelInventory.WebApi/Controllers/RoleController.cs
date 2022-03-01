@@ -1,11 +1,13 @@
 ﻿using HotelInventory.Models;
 using HotelInventory.Models.Roles;
 using HotelInventory.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HotelInventory.WebApi.Controllers
@@ -44,6 +46,7 @@ namespace HotelInventory.WebApi.Controllers
             var roles = await _roleService.GetRoleByNameAsync(roleName);
             return roles;
         }
+        [Authorize]
         [HttpPost]
         [Route("CreateRole")]
         public async Task<ApiResponse<RoleDto>> Create([FromBody]RoleDto role)
@@ -51,6 +54,7 @@ namespace HotelInventory.WebApi.Controllers
             var roles = await _roleService.CreateRole(role);
             return roles;
         }
+        [Authorize]
         [HttpPut]
         [Route("UpdateRole")]
         public async Task<ApiResponse<RoleDto>> Update([FromBody] RoleDto role)
@@ -58,6 +62,7 @@ namespace HotelInventory.WebApi.Controllers
             var roles = await _roleService.UpdateRole(role);
             return roles;
         }
+        [Authorize]
         [HttpDelete]
         [Route("DeleteRole/{roleId:int}")]
         public async Task<ApiResponse<bool>> Delete(int roleId)
