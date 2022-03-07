@@ -62,8 +62,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<GoogleMapDetailsDto>(googleMapDetails.FirstOrDefault());
                     _logger.LogError($"GoogleMapDetails already exists with latitude - {googleMapDetails.FirstOrDefault().Latitude.ToString()} and longitude - {googleMapDetails.FirstOrDefault().Longitude.ToString()}.");
-                    return new ApiResponse<GoogleMapDetailsDto> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"GoogleMapDetails already exists with latitude - {googleMapDetails.FirstOrDefault().Latitude.ToString()} and longitude - {googleMapDetails.FirstOrDefault().Longitude.ToString()}." };
+                    return new ApiResponse<GoogleMapDetailsDto> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"GoogleMapDetails already exists with latitude - {googleMapDetails.FirstOrDefault().Latitude.ToString()} and longitude - {googleMapDetails.FirstOrDefault().Longitude.ToString()}." };
                 }
             }
             catch (Exception ex)

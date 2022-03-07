@@ -71,7 +71,7 @@ namespace HotelInventory.Services.Implementation
                 var RoomFacilityMapping = await _repo.GetFilteredRoomFacilityMappingAsync(filter);
                 if (RoomFacilityMapping.Count() == 0)
                 {
-                    var RoomFacilityMappingEntity = _mapper.Map<RoomFacilityMappingSnapshot>(RoomFacilityMapping);
+                    var RoomFacilityMappingEntity = _mapper.Map<RoomFacilityMappingSnapshot>(RoomFacilityMappingObj);
                     await _repo.CreateRoomFacilityMapping(RoomFacilityMappingEntity);
                     createdObj = _mapper.Map<RoomFacilityMappingDTO>(RoomFacilityMappingEntity);
                     _logger.LogInfo($"Succesfully created RoomFacilityMapping with id {RoomFacilityMappingEntity.Id.ToString()}.");
@@ -79,8 +79,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<RoomFacilityMappingDTO>(RoomFacilityMapping.FirstOrDefault());
                     _logger.LogError($"RoomFacilityMapping already exists with Facility - {RoomFacilityMapping.FirstOrDefault().FaciltiyId.ToString()}.");
-                    return new ApiResponse<RoomFacilityMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"RoomFacilityMapping already exists with Facility - {RoomFacilityMapping.FirstOrDefault().FaciltiyId.ToString()}." };
+                    return new ApiResponse<RoomFacilityMappingDTO> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"RoomFacilityMapping already exists with Facility - {RoomFacilityMapping.FirstOrDefault().FaciltiyId.ToString()}." };
                 }
             }
             catch (Exception ex)

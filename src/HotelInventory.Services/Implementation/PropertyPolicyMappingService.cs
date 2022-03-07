@@ -79,8 +79,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<PropertyPolicyMappingDTO>(PropertyPolicyMapping.FirstOrDefault());
                     _logger.LogError($"PropertyPolicyMapping already exists for the property with id - {PropertyPolicyMapping.FirstOrDefault().PropertyId.ToString()}.");
-                    return new ApiResponse<PropertyPolicyMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"PropertyPolicyMapping already exists for the property with id - {PropertyPolicyMapping.FirstOrDefault().PropertyId.ToString()}." };
+                    return new ApiResponse<PropertyPolicyMappingDTO> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"PropertyPolicyMapping already exists for the property with id - {PropertyPolicyMapping.FirstOrDefault().PropertyId.ToString()}." };
                 }
             }
             catch (Exception ex)

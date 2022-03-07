@@ -50,7 +50,7 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogError("Address object sent from client is null.");
                     return new ApiResponse<AddressDTO> { Data = null, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = "Address object sent from client is null" };
                 }
-                Expression<Func<AddressSnapshot, bool>> filter = _ => _.AddressLine1.Trim().ToUpper() == Address.AddressLine1.Trim().ToUpper();
+                Expression<Func<AddressSnapshot, bool>> filter = _ => _.AddressLine1.Trim().ToUpper() == Address.AddressLine1.Trim().ToUpper() && _.Pincode == Address.Pincode;
                 var address = await _repo.GetFilteredAddressAsync(filter);
                 if (address.Count() == 0)
                 {
@@ -62,8 +62,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<AddressDTO>(address.FirstOrDefault());
                     _logger.LogError($"Address already exists with address line1 - {address.FirstOrDefault().AddressLine1}.");
-                    return new ApiResponse<AddressDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"Address already exists with address line1 - {address.FirstOrDefault().AddressLine1}." };
+                    return new ApiResponse<AddressDTO> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"Address already exists with address line1 - {address.FirstOrDefault().AddressLine1}." };
                 }
             }
             catch (Exception ex)
