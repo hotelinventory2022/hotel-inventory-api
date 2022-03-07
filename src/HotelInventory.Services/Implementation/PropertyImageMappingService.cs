@@ -67,11 +67,11 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogError("PropertyImageMapping object sent from client is null.");
                     return new ApiResponse<PropertyImageMappingDTO> { Data = null, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = "PropertyImageMapping object sent from client is null" };
                 }
-                Expression<Func<PropertyImageMappingSnapshot, bool>> filter = _ => _.PropertyId == propertyImageMappingObj.PropertyId && _.ImageUrl == propertyImageMappingObj.ImageUrl;
+                Expression<Func<PropertyImageMappingSnapshot, bool>> filter = _ => _.PropertyId == propertyImageMappingObj.PropertyId && _.RoomId == propertyImageMappingObj.RoomId && _.ImageUrl == propertyImageMappingObj.ImageUrl;
                 var PropertyImageMapping = await _repo.GetFilteredPropertyImageMappingAsync(filter);
                 if (PropertyImageMapping.Count() == 0)
                 {
-                    var PropertyImageMappingEntity = _mapper.Map<PropertyImageMappingSnapshot>(PropertyImageMapping);
+                    var PropertyImageMappingEntity = _mapper.Map<PropertyImageMappingSnapshot>(propertyImageMappingObj);
                     await _repo.CreatePropertyImageMapping(PropertyImageMappingEntity);
                     createdObj = _mapper.Map<PropertyImageMappingDTO>(PropertyImageMappingEntity);
                     _logger.LogInfo($"Succesfully created PropertyImageMapping with id {PropertyImageMappingEntity.Id.ToString()}.");
@@ -79,8 +79,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<PropertyImageMappingDTO>(PropertyImageMapping.FirstOrDefault());
                     _logger.LogError($"PropertyImageMapping already exists with Image - {PropertyImageMapping.FirstOrDefault().ImageUrl.ToString()}.");
-                    return new ApiResponse<PropertyImageMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"PropertyImageMapping already exists with Image - {PropertyImageMapping.FirstOrDefault().ImageUrl.ToString()}." };
+                    return new ApiResponse<PropertyImageMappingDTO> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"PropertyImageMapping already exists with Image - {PropertyImageMapping.FirstOrDefault().ImageUrl.ToString()}." };
                 }
             }
             catch (Exception ex)

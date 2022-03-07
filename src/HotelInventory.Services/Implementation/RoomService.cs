@@ -67,21 +67,11 @@ namespace HotelInventory.Services.Implementation
                     _logger.LogError("Room object sent from client is null.");
                     return new ApiResponse<RoomDTO> { Data = null, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = "Room object sent from client is null" };
                 }
-                Expression<Func<RoomSnapshot, bool>> filter = _ => _.Name == RoomObj.Name && _.PropertyId == RoomObj.PropertyId && _.RoomTypeId == RoomObj.RoomTypeId;
-                var Room = await _repo.GetFilteredRoomAsync(filter);
-                if (Room.Count() == 0)
-                {
-                    var RoomEntity = _mapper.Map<RoomSnapshot>(Room);
-                    await _repo.CreateRoom(RoomEntity);
-                    createdObj = _mapper.Map<RoomDTO>(RoomEntity);
-                    _logger.LogInfo($"Succesfully created Room with id {RoomEntity.Id.ToString()}.");
-                    return new ApiResponse<RoomDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {RoomEntity.Id.ToString()}." };
-                }
-                else
-                {
-                    _logger.LogError($"Room already exists for the Room with id - {Room.FirstOrDefault().Id.ToString()}.");
-                    return new ApiResponse<RoomDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"Room already exists for the Room with id - {Room.FirstOrDefault().Id.ToString()}." };
-                }
+                var RoomEntity = _mapper.Map<RoomSnapshot>(RoomObj);
+                await _repo.CreateRoom(RoomEntity);
+                createdObj = _mapper.Map<RoomDTO>(RoomEntity);
+                _logger.LogInfo($"Succesfully created Room with id {RoomEntity.Id.ToString()}.");
+                return new ApiResponse<RoomDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {RoomEntity.Id.ToString()}." };
             }
             catch (Exception ex)
             {
