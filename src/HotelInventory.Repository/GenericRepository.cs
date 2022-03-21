@@ -1,12 +1,10 @@
 ﻿using HotelInventory.Core;
 using HotelInventory.DAL;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HotelInventory.Repository
@@ -32,10 +30,14 @@ namespace HotelInventory.Repository
         {
             return await _Context.Set<T>().FindAsync(id);
         }
-        
         public async Task Create(T entity)
         {
             await _Context.Set<T>().AddAsync(entity);
+            await _Context.SaveChangesAsync();
+        }
+        public async Task CreateBulk(IEnumerable<T> entity)
+        {
+            await _Context.Set<T>().AddRangeAsync(entity);
             await _Context.SaveChangesAsync();
         }
 
@@ -50,6 +52,5 @@ namespace HotelInventory.Repository
             _Context.Set<T>().Remove(entity);
             await _Context.SaveChangesAsync();
         }
-        
     }
 }
