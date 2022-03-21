@@ -15,6 +15,5 @@ src/HotelInventory.Services/bin/
 src/HotelInventory.Services/obj/
 src/HotelInventory.WebApi/bin/
 src/HotelInventory.WebApi/obj/
-src/HotelInventory.WebApi/appsettings.json
 *.pdb
 *.dll
