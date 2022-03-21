@@ -45,10 +45,15 @@ namespace HotelInventory.Services.Implementation
                 else
                     propertyIds = availabilty.PropertyIds;
 
-                Expression<Func<RoomSnapshot, bool>> roomFilter = _ => propertyIds.Contains(_.PropertyId);
-                var ownerRooms = await _roomRepo.GetFilteredRoomAsync(roomFilter);
+                if (availabilty.ListOfAvailabilties == null || availabilty.ListOfAvailabilties.Count == 0)
+                {
+                    Expression<Func<RoomSnapshot, bool>> roomFilter = _ => propertyIds.Contains(_.PropertyId);
+                    var ownerRooms = await _roomRepo.GetFilteredRoomAsync(roomFilter);
 
-                roomIds = ownerRooms.Select(_ => _.Id).ToList();
+                    roomIds = ownerRooms.Select(_ => _.Id).ToList();
+                }
+                else
+                    roomIds = availabilty.ListOfAvailabilties.Select(_ => _.RoomId).ToList();
 
                 Expression<Func<AvailabiltyRateSnapshot, bool>> avlRateFilter = _ => roomIds.Contains(_.RoomId) && _.StartDate >= availabilty.StartDate && _.StartDate <= availabilty.EndDate;
                 var availibilty = await _repo.GetFilteredAvailabilityAsync(avlRateFilter);
@@ -74,11 +79,16 @@ namespace HotelInventory.Services.Implementation
                 {
                     if (slot.Id > 0)
                     {
-                        dbTask.Add(UpdateAvailibilty(slot));
+                        dbTask.Add(UpdateAvailibilty(slot, Availibilty.LoggedInUserId));
                     }
                     else 
                     {
                         var availibiltyEntity = _mapper.Map<AvailabiltyRateSnapshot>(slot);
+                        availibiltyEntity.CreatedBy = Availibilty.LoggedInUserId;
+                        availibiltyEntity.CreatedOn = DateTime.Now;
+                        availibiltyEntity.IsActive = true;
+                        availibiltyEntity.LastUpdatedBy = Availibilty.LoggedInUserId;
+                        availibiltyEntity.LastUpdatedOn = DateTime.Now;
                         createList.Add(availibiltyEntity);
                     }                    
                 }
@@ -96,13 +106,23 @@ namespace HotelInventory.Services.Implementation
             }
         }
 
-        private async Task UpdateAvailibilty(AvailabiltyDTO slot)
+        private async Task UpdateAvailibilty(AvailabiltyDTO slot, int loggedInUserId)
         {
             try
             {
-                var availibiltyEntity = _mapper.Map<AvailabiltyRateSnapshot>(slot);
-                await _repo.UpdateAvailability(availibiltyEntity);
-                _logger.LogInfo($"Succesfully updated availibilty object with id {availibiltyEntity.Id.ToString()}.");
+                Expression<Func<AvailabiltyRateSnapshot, bool>> filter = _ => _.Id == slot.Id;
+                var availibiltyEntity = await _repo.GetFilteredAvailabilityAsync(filter);
+                
+                var availibiltyEntityToUpdate = _mapper.Map<AvailabiltyRateSnapshot>(slot);
+                availibiltyEntityToUpdate.CreatedBy = availibiltyEntity.FirstOrDefault().CreatedBy;
+                availibiltyEntityToUpdate.CreatedOn = availibiltyEntity.FirstOrDefault().CreatedOn;
+                availibiltyEntityToUpdate.IsActive = availibiltyEntity.FirstOrDefault().IsActive;
+                availibiltyEntityToUpdate.IsDeleted = availibiltyEntity.FirstOrDefault().IsDeleted;
+                availibiltyEntityToUpdate.LastUpdatedBy = loggedInUserId;
+                availibiltyEntityToUpdate.LastUpdatedOn = DateTime.Now;
+
+                 await _repo.UpdateAvailability(availibiltyEntityToUpdate);
+                _logger.LogInfo($"Succesfully updated availibilty object with id {availibiltyEntityToUpdate.Id}.");
             }
             catch(Exception ex)
             {
