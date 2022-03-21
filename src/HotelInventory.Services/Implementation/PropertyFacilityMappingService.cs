@@ -71,7 +71,7 @@ namespace HotelInventory.Services.Implementation
                 var PropertyFacilityMapping = await _repo.GetFilteredPropertyFacilityMappingAsync(filter);
                 if (PropertyFacilityMapping.Count() == 0)
                 {
-                    var PropertyFacilityMappingEntity = _mapper.Map<PropertyFacilityMappingSnapshot>(PropertyFacilityMapping);
+                    var PropertyFacilityMappingEntity = _mapper.Map<PropertyFacilityMappingSnapshot>(propertyFacilityMappingObj);
                     await _repo.CreatePropertyFacilityMapping(PropertyFacilityMappingEntity);
                     createdObj = _mapper.Map<PropertyFacilityMappingDTO>(PropertyFacilityMappingEntity);
                     _logger.LogInfo($"Succesfully created PropertyFacilityMapping with id {PropertyFacilityMappingEntity.Id.ToString()}.");
@@ -79,8 +79,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<PropertyFacilityMappingDTO>(PropertyFacilityMapping.FirstOrDefault());
                     _logger.LogError($"PropertyFacilityMapping already exists with Facility - {PropertyFacilityMapping.FirstOrDefault().FaciltiyId.ToString()}.");
-                    return new ApiResponse<PropertyFacilityMappingDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"PropertyFacilityMapping already exists with Facility - {PropertyFacilityMapping.FirstOrDefault().FaciltiyId.ToString()}." };
+                    return new ApiResponse<PropertyFacilityMappingDTO> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"PropertyFacilityMapping already exists with Facility - {PropertyFacilityMapping.FirstOrDefault().FaciltiyId.ToString()}." };
                 }
             }
             catch (Exception ex)

@@ -95,7 +95,7 @@ namespace HotelInventory.Services.Implementation
                 var Property = await _repo.GetFilteredPropertyAsync(filter);
                 if (Property.Count() == 0)
                 {
-                    var PropertyEntity = _mapper.Map<PropertySnapshot>(Property);
+                    var PropertyEntity = _mapper.Map<PropertySnapshot>(propertyObj);
                     await _repo.CreateProperty(PropertyEntity);
                     createdObj = _mapper.Map<PropertyDTO>(PropertyEntity);
                     _logger.LogInfo($"Succesfully created Property with id {PropertyEntity.Id.ToString()}.");
@@ -103,8 +103,9 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
+                    var existingObj = _mapper.Map<PropertyDTO>(Property.FirstOrDefault());
                     _logger.LogError($"Property already exists for the property with id - {Property.FirstOrDefault().Id.ToString()}.");
-                    return new ApiResponse<PropertyDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"Property already exists for the property with id - {Property.FirstOrDefault().Id.ToString()}." };
+                    return new ApiResponse<PropertyDTO> { Data = existingObj, StatusCode = System.Net.HttpStatusCode.BadRequest, Message = $"Property already exists for the property with id - {Property.FirstOrDefault().Id.ToString()}." };
                 }
             }
             catch (Exception ex)
