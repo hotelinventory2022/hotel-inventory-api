@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HotelInventory.Core;
 using HotelInventory.Core.Domains;
 using HotelInventory.Core.Interfaces;
 using HotelInventory.Models;
@@ -189,7 +190,7 @@ namespace HotelInventory.Services.Implementation
                         LastUpdatedBy = model.LoggedInUserId,
                         LastUpdatedOn = now
                     };
-                    var createdGoogleMapObj = _gmapService.CreateGoogleMapDetails(googleMapEntity);
+                    var createdGoogleMapObj = await _gmapService.CreateGoogleMapDetails(googleMapEntity);
 
                     //Create address object
                     var addressEntity = new AddressDTO
@@ -197,7 +198,7 @@ namespace HotelInventory.Services.Implementation
                         AddressLine1 = model.PropertyAddress.Address1,
                         AddressLine2 = model.PropertyAddress.Address2,
                         Country_State_City_Area_Ids = string.Join(';', model.PropertyAddress.AreaIds),
-                        GoogleMapId = createdGoogleMapObj.Result.Data.Id,
+                        GoogleMapId = createdGoogleMapObj.Data.Id,
                         Pincode = model.PropertyAddress.Pincode,
                         PostOffice = model.PropertyAddress.PostOffice,
                         Landmark = model.PropertyAddress.Landmark,
@@ -208,7 +209,7 @@ namespace HotelInventory.Services.Implementation
                         LastUpdatedBy = model.LoggedInUserId,
                         LastUpdatedOn = now
                     };
-                    var createdAddressObj = _addressService.CreateAddress(addressEntity);
+                    var createdAddressObj = await _addressService.CreateAddress(addressEntity);
 
                     //Create Property object
                     var PropertyEntity = new PropertyDTO
@@ -217,7 +218,7 @@ namespace HotelInventory.Services.Implementation
                         PropertyTypeId = model.PropertyTypeId,
                         PropertySubTypeId = model.PropertySubTypeId,
                         OwnerId = model.OwnerId,
-                        AddressId = createdAddressObj.Id,
+                        AddressId = createdAddressObj.Data.Id,
                         ContactPersonName = model.PropertyContactName,
                         ContactEmail = model.PropertyContactEmail,
                         ContactPhoneNo = model.PropertyContactPhoneNo,
@@ -235,14 +236,14 @@ namespace HotelInventory.Services.Implementation
                         LastUpdatedBy = model.LoggedInUserId,
                         LastUpdatedOn = now
                     };
-                    var createdProperty = this.CreateProperty(PropertyEntity);
+                    var createdProperty = await this.CreateProperty(PropertyEntity);
 
                     //Create Property Facility Mapping objects
                     foreach(var propfacility in model.PropertyFaciltyIds)
                     {
                         var PropertyFacilityMappingEntity = new PropertyFacilityMappingDTO
                         {
-                            PropertyId = createdProperty.Result.Data.Id,
+                            PropertyId = createdProperty.Data.Id,
                             FaciltiyId = propfacility,
                             IsActive = true,
                             IsDeleted = false,
@@ -251,13 +252,13 @@ namespace HotelInventory.Services.Implementation
                             LastUpdatedBy = model.LoggedInUserId,
                             LastUpdatedOn = now
                         };
-                        var createdPropertyFacilityMappingObj = _propertyFacilityMappingService.CreatePropertyFacilityMapping(PropertyFacilityMappingEntity);
+                        var createdPropertyFacilityMappingObj = await _propertyFacilityMappingService.CreatePropertyFacilityMapping(PropertyFacilityMappingEntity);
                     }
 
                     //Create Property Policy Mapping objects
                     var PropertyPolicyMappingEntity = new PropertyPolicyMappingDTO
                     {
-                        PropertyId = createdProperty.Result.Data.Id,
+                        PropertyId = createdProperty.Data.Id,
                         HouseRules = model.PropertyHouseRules,
                         CancellationPolicy = model.PropertyCancellationPolicy,
                         IsActive = true,
@@ -267,14 +268,14 @@ namespace HotelInventory.Services.Implementation
                         LastUpdatedBy = model.LoggedInUserId,
                         LastUpdatedOn = now
                     };
-                    var createdPropertyPolicyMappingObj = _propertyPolicyMappingService.CreatePropertyPolicyMapping(PropertyPolicyMappingEntity);
+                    var createdPropertyPolicyMappingObj = await _propertyPolicyMappingService.CreatePropertyPolicyMapping(PropertyPolicyMappingEntity);
 
                     //Create Property Image Mapping objects
                     foreach (var propimage in model.PropertyImagesUrls)
                     {
                         var PropertyImageMappingEntity = new PropertyImageMappingDTO
                         {
-                            PropertyId = createdProperty.Result.Data.Id,
+                            PropertyId = createdProperty.Data.Id,
                             ImageUrl = propimage,
                             IsActive = true,
                             IsDeleted = false,
@@ -283,7 +284,7 @@ namespace HotelInventory.Services.Implementation
                             LastUpdatedBy = model.LoggedInUserId,
                             LastUpdatedOn = now
                         };
-                        var createdPropertyImageMappingObj = _propertImageMappingService.CreatePropertyImageMapping(PropertyImageMappingEntity);
+                        var createdPropertyImageMappingObj = await _propertImageMappingService.CreatePropertyImageMapping(PropertyImageMappingEntity);
                     }
 
                     //Create Room objects
@@ -291,7 +292,7 @@ namespace HotelInventory.Services.Implementation
                     {
                         var RoomEntity = new RoomDTO
                         {
-                            PropertyId = createdProperty.Result.Data.Id,
+                            PropertyId = createdProperty.Data.Id,
                             RoomTypeId = proproom.PropertyRoomTypeId,
                             RoomSubTypeId = proproom.PropertyRoomSubTypeId,
                             Check_In_Time = proproom.RoomCheckInTime,
@@ -308,14 +309,14 @@ namespace HotelInventory.Services.Implementation
                             LastUpdatedBy = model.LoggedInUserId,
                             LastUpdatedOn = now
                         };
-                        var createdRoomObj = _roomService.CreateRoom(RoomEntity);
+                        var createdRoomObj = await _roomService.CreateRoom(RoomEntity);
 
                         //Create Room Facility Mapping object
                         foreach(var roomFaciity in proproom.PropertyRoomFaciltyIds)
                         {
                             var RoomFacilityMappingEntity = new RoomFacilityMappingDTO
                             {
-                                RoomId = createdRoomObj.Result.Data.Id,
+                                RoomId = createdRoomObj.Data.Id,
                                 FaciltiyId = roomFaciity,
                                 IsActive = true,
                                 IsDeleted = false,
@@ -324,7 +325,7 @@ namespace HotelInventory.Services.Implementation
                                 LastUpdatedBy = model.LoggedInUserId,
                                 LastUpdatedOn = now
                             };
-                            var createdRoomFacilityMappingObj = _roomFacilityMappingService.CreateRoomFacilityMapping(RoomFacilityMappingEntity);
+                            var createdRoomFacilityMappingObj = await _roomFacilityMappingService.CreateRoomFacilityMapping(RoomFacilityMappingEntity);
                         }
 
                         //Create Room Image Mapping object
@@ -332,8 +333,8 @@ namespace HotelInventory.Services.Implementation
                         {
                             var RoomImageMappingEntity = new PropertyImageMappingDTO
                             {
-                                PropertyId = createdProperty.Result.Data.Id,
-                                RoomId = createdRoomObj.Result.Data.Id,
+                                PropertyId = createdProperty.Data.Id,
+                                RoomId = createdRoomObj.Data.Id,
                                 ImageUrl = propimage,
                                 IsActive = true,
                                 IsDeleted = false,
@@ -342,13 +343,13 @@ namespace HotelInventory.Services.Implementation
                                 LastUpdatedBy = model.LoggedInUserId,
                                 LastUpdatedOn = now
                             };
-                            var createdRoomImageMappingObj = _propertImageMappingService.CreatePropertyImageMapping(RoomImageMappingEntity);
+                            var createdRoomImageMappingObj = await _propertImageMappingService.CreatePropertyImageMapping(RoomImageMappingEntity);
                         }
                     }
 
                     
-                    _logger.LogInfo($"Succesfully created Property with id {createdProperty.Result.Data.Id.ToString()}.");
-                    return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {createdProperty.Result.Data.Id.ToString()}." };
+                    _logger.LogInfo($"Succesfully created Property with id {createdProperty.Data.Id.ToString()}.");
+                    return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {createdProperty.Data.Id.ToString()}." };
                 }
                 else
                 {
