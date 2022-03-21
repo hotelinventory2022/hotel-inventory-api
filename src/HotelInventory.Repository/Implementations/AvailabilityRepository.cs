@@ -25,7 +25,7 @@ namespace HotelInventory.Repository.Implementations
         }
         public async Task CreateAvailability(IEnumerable<AvailabiltyRateSnapshot> obj)
         {
-            await Create(obj);
+            await CreateBulk(obj);
         }
         public async Task UpdateAvailability(AvailabiltyRateSnapshot obj)
         {

@@ -1,7 +1,20 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/src/.vs/HotelInventory/DesignTimeBuild
-/src/.vs/HotelInventory/v15
-src/.vs/HotelInventory/v16
+src/.vs/
+src/HotelInventory.Core/bin/
+src/HotelInventory.Core/obj/
+src/HotelInventory.DAL/bin/
+src/HotelInventory.DAL/obj/
+src/HotelInventory.Models/bin/
+src/HotelInventory.Models/obj/
+src/HotelInventory.Repository/bin/
+src/HotelInventory.Repository/obj/
+src/HotelInventory.Services/bin/
+src/HotelInventory.Services/obj/
+src/HotelInventory.WebApi/bin/
+src/HotelInventory.WebApi/obj/
+src/HotelInventory.WebApi/appsettings.json
+*.pdb
+*.dll

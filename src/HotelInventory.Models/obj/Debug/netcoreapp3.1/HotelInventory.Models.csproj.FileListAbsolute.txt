@@ -1,9 +1,0 @@
-E:\HotelInventory\HotelInventory\HotelInventory.Models\bin\Debug\netcoreapp3.1\HotelInventory.Models.deps.json
-E:\HotelInventory\HotelInventory\HotelInventory.Models\bin\Debug\netcoreapp3.1\HotelInventory.Models.dll
-E:\HotelInventory\HotelInventory\HotelInventory.Models\bin\Debug\netcoreapp3.1\HotelInventory.Models.pdb
-E:\HotelInventory\HotelInventory\HotelInventory.Models\obj\Debug\netcoreapp3.1\HotelInventory.Models.AssemblyInfoInputs.cache
-E:\HotelInventory\HotelInventory\HotelInventory.Models\obj\Debug\netcoreapp3.1\HotelInventory.Models.AssemblyInfo.cs
-E:\HotelInventory\HotelInventory\HotelInventory.Models\obj\Debug\netcoreapp3.1\HotelInventory.Models.csproj.CoreCompileInputs.cache
-E:\HotelInventory\HotelInventory\HotelInventory.Models\obj\Debug\netcoreapp3.1\HotelInventory.Models.dll
-E:\HotelInventory\HotelInventory\HotelInventory.Models\obj\Debug\netcoreapp3.1\HotelInventory.Models.pdb
-E:\HotelInventory\HotelInventory\HotelInventory.Models\obj\Debug\netcoreapp3.1\HotelInventory.Models.csproj.AssemblyReference.cache

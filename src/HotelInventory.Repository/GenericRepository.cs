@@ -32,8 +32,12 @@ namespace HotelInventory.Repository
         {
             return await _Context.Set<T>().FindAsync(id);
         }
-        
-        public async Task Create(IEnumerable<T> entity)
+        public async Task Create(T entity)
+        {
+            await _Context.Set<T>().AddAsync(entity);
+            await _Context.SaveChangesAsync();
+        }
+        public async Task CreateBulk(IEnumerable<T> entity)
         {
             await _Context.Set<T>().AddRangeAsync(entity);
             await _Context.SaveChangesAsync();
