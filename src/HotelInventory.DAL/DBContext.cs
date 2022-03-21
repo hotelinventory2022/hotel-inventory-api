@@ -24,6 +24,6 @@ namespace HotelInventory.DAL
         public DbSet<RoomSnapshot> Rooms { get; set; }
         public DbSet<PropertySnapshot> Properties { get; set; }
         public DbSet<UserSnapshot> Users { get; set; }
-
+        public DbSet<AvailabiltyRateSnapshot> AvailabiltyRate { get; set; }
     }
 }
