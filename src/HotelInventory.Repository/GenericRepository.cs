@@ -1,12 +1,10 @@
 ﻿using HotelInventory.Core;
 using HotelInventory.DAL;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace HotelInventory.Repository
@@ -52,10 +50,6 @@ namespace HotelInventory.Repository
         public async Task Delete(T entity)
         {
             _Context.Set<T>().Remove(entity);
-            await _Context.SaveChangesAsync();
-        }
-        public async Task SaveChanges()
-        {
             await _Context.SaveChangesAsync();
         }
     }

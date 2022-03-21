@@ -15,6 +15,6 @@ namespace HotelInventory.Core
         Task Create(T entity);
         Task Update(T entity);
         Task Delete(T entity);
-        Task SaveChanges();
+        Task CreateBulk(IEnumerable<T> entity);
     }
 }
