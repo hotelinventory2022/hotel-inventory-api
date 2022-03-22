@@ -37,8 +37,8 @@ namespace HotelInventory.Models.Property
     public class PropertySearchResponseGoogleMapDetailsModel
     {
         public long GoogleMapDetailId { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
     }
     public class PropertySearchResponseCountry_State_City_AreaModel
     {

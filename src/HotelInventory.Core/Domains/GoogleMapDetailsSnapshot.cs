@@ -20,9 +20,9 @@ namespace HotelInventory.Core.Domains
         [Column("Id")]
         public long Id { get; set; }
         [Column("Latitude")]
-        public double Latitude { get; set; }
+        public decimal Latitude { get; set; }
         [Column("Longitude")]
-        public double Longitude { get; set; }
+        public decimal Longitude { get; set; }
         [Column("IsActive")]
         public bool IsActive { get; set; }
         [Column("IsDeleted")]
