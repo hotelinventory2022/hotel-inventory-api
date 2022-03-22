@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HotelInventory.Core;
 using HotelInventory.Core.Domains;
 using HotelInventory.Core.Interfaces;
 using HotelInventory.Models;
