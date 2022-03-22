@@ -17,3 +17,4 @@ src/HotelInventory.WebApi/bin/
 src/HotelInventory.WebApi/obj/
 *.pdb
 *.dll
+/src/HotelInventory.Common

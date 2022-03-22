@@ -10,9 +10,11 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.22" />
     <PackageReference Include="NLog" Version="4.7.13" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.16.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.18" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HotelInventory.Common\HotelInventory.Common.csproj" />
     <ProjectReference Include="..\HotelInventory.Core\HotelInventory.Core.csproj" />
     <ProjectReference Include="..\HotelInventory.Models\HotelInventory.Models.csproj" />
   </ItemGroup>
