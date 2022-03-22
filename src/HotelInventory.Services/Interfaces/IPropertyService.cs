@@ -15,5 +15,6 @@ namespace HotelInventory.Services.Interfaces
         Task<ApiResponse<PropertyDTO>> UpdateProperty(PropertyDTO Property);
         Task<ApiResponse<bool>> DeleteProperty(int PropertyId);
         Task<ApiResponse<bool>> UploadPropertyByOwner(PropertyUploadRequestModel model);
+        Task<ApiResponse<PaginatedResponseModel<List<PropertySearchResponseModel>>>> SearchProperty(PaginatedRequestModel<PropertySearchRequestModel> searchRequestModel);
     }
 }

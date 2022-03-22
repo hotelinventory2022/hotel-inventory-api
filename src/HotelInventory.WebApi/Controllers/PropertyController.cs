@@ -23,10 +23,18 @@ namespace HotelInventory.WebApi.Controllers
             _propertyService = propertyService;
         }
 
+        //[Authorize]
+        [HttpPost]
+        [Route("SearchProperty")]
+        public async Task<ApiResponse<PaginatedResponseModel<List<PropertySearchResponseModel>>>> SearchProperty([FromBody] PaginatedRequestModel<PropertySearchRequestModel> searchModel)
+        {
+            var res = await _propertyService.SearchProperty(searchModel);
+            return res;
+        }
         [Authorize]
         [HttpPost]
         [Route("UploadPropertyByOwner")]
-        public async Task<ApiResponse<bool>> Create([FromBody] PropertyUploadRequestModel property)
+        public async Task<ApiResponse<bool>> UploadPropertyByOwner([FromBody] PropertyUploadRequestModel property)
         {
             var res = await _propertyService.UploadPropertyByOwner(property);
             return res;

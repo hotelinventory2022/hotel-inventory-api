@@ -71,7 +71,7 @@ namespace HotelInventory.Services.Implementation
                 var PropertyPolicyMapping = await _repo.GetFilteredPropertyPolicyMappingAsync(filter);
                 if (PropertyPolicyMapping.Count() == 0)
                 {
-                    var PropertyPolicyMappingEntity = _mapper.Map<PropertyPolicyMappingSnapshot>(PropertyPolicyMapping);
+                    var PropertyPolicyMappingEntity = _mapper.Map<PropertyPolicyMappingSnapshot>(propertyPolicyMappingObj);
                     await _repo.CreatePropertyPolicyMapping(PropertyPolicyMappingEntity);
                     createdObj = _mapper.Map<PropertyPolicyMappingDTO>(PropertyPolicyMappingEntity);
                     _logger.LogInfo($"Succesfully created PropertyPolicyMapping with id {PropertyPolicyMappingEntity.Id.ToString()}.");
