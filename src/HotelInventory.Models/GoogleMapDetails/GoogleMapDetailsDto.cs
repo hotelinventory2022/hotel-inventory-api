@@ -7,8 +7,8 @@ namespace HotelInventory.Models.GoogleMapDetails
     public class GoogleMapDetailsDto
     {
         public long Id { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal Longitude { get; set; }
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public int CreatedBy { get; set; }
