@@ -83,7 +83,7 @@ namespace HotelInventory.WebApi.Controllers
         }
         private AvailabiltyRequestModel verifyRequest(AvailabiltyRequestModel availabilty, bool checkRoom)
         {
-            if (availabilty.StartDate == DateTime.MinValue || availabilty.StartDate < DateTime.Now || availabilty.EndDate == DateTime.MinValue || availabilty.EndDate < DateTime.Now)
+            if (availabilty.StartDate == DateTime.MinValue || availabilty.StartDate.DayOfYear < DateTime.Now.DayOfYear || availabilty.EndDate == DateTime.MinValue || availabilty.EndDate.DayOfYear < DateTime.Now.DayOfYear)
             {
                 throw new NotSupportedException("StartDate, EndDate should be greater than todays date");
             }
