@@ -25,6 +25,11 @@ namespace HotelInventory.Services.Implementation
         private ILoggerManager _logger;
         private IMapper _mapper;
         private IPropertyRepository _repo;
+        private IPropertyFacilityMappingRepository _propertyFacilityRepo;
+        private IPropertyPolicyMappingRepository _propertyPolicyRepo;
+        private IAddressRepository _addressRepo;
+        private IGoogleMapDetailsRepository _gmapRepo;
+        private IAreaRepository _areaRepo;
         private IGoogleMapDetailsService _gmapService;
         private IAddressService _addressService;
         private IPropertyFacilityMappingService _propertyFacilityMappingService;
@@ -32,13 +37,19 @@ namespace HotelInventory.Services.Implementation
         private IPropertyImageMappingService _propertImageMappingService;
         private IRoomService _roomService;
         private IRoomFacilityMappingService _roomFacilityMappingService;
-        public PropertyService(ILoggerManager logger, IMapper mapper, IPropertyRepository repo, IGoogleMapDetailsService gmapService, IAddressService addressService,
+        public PropertyService(ILoggerManager logger, IMapper mapper, IPropertyRepository repo, IPropertyFacilityMappingRepository propertyFacilityRepo, IAddressRepository addressRepo,
+            IPropertyPolicyMappingRepository propertyPolicyRepo, IGoogleMapDetailsRepository gmapRepo, IAreaRepository areaRepo, IGoogleMapDetailsService gmapService, IAddressService addressService, 
             IPropertyFacilityMappingService propertyFacilityMappingService, IPropertyPolicyMappingService propertyPolicyMappingService, IPropertyImageMappingService propertImageMappingService, 
             IRoomService roomService, IRoomFacilityMappingService roomFacilityMappingService)
         {
             _logger = logger;
             _mapper = mapper;
             _repo = repo;
+            _propertyFacilityRepo = propertyFacilityRepo;
+            _addressRepo = addressRepo;
+            _propertyPolicyRepo = propertyPolicyRepo;
+            _gmapRepo = gmapRepo;
+            _areaRepo = areaRepo;
             _gmapService = gmapService;
             _addressService = addressService;
             _propertyFacilityMappingService = propertyFacilityMappingService;
@@ -349,7 +360,7 @@ namespace HotelInventory.Services.Implementation
 
                     
                     _logger.LogInfo($"Succesfully created Property with id {createdProperty.Data.Id.ToString()}.");
-                    return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Role with id {createdProperty.Data.Id.ToString()}." };
+                    return new ApiResponse<bool> { Data = true, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created Property with id {createdProperty.Data.Id.ToString()}." };
                 }
                 else
                 {
@@ -362,6 +373,216 @@ namespace HotelInventory.Services.Implementation
                 _logger.LogError($"Something went wrong inside CreateProperty action: {ex.Message}");
                 return new ApiResponse<bool> { Data = false, StatusCode = System.Net.HttpStatusCode.InternalServerError, Message = "500 Internal Server Error - Something went wrong." };
             }
+        }
+        public async Task<ApiResponse<PaginatedResponseModel<List<PropertySearchResponseModel>>>> SearchProperty(PaginatedRequestModel<PropertySearchRequestModel> searchRequestModel)
+        {
+            IEnumerable<PropertySnapshot> properties = null;
+            IEnumerable<PropertyFacilityMappingSnapshot> propertyFacilities = null;
+            IEnumerable<AddressSnapshot> address = null;
+
+            List<int> propertyIds = new List<int>();
+            List<long> addressIds = new List<long>();
+
+            Expression<Func<PropertySnapshot, bool>> propertyExpr = null;
+            Expression<Func<PropertyFacilityMappingSnapshot, bool>> propertyFaciltiyExpr = null;
+            Expression<Func<AddressSnapshot, bool>> addressExpr = null;
+            Expression<Func<PropertyPolicyMappingSnapshot, bool>> propertyPolicyExpr = null;
+
+            //See if address search is there, if present get the address ids
+            if (searchRequestModel.RequestModel.Country_State_City_Area_Id > 0)
+            {
+                addressExpr = x => x.Country_State_City_Area_Ids.Contains(searchRequestModel.RequestModel.Country_State_City_Area_Id.ToString()) && x.IsActive && !x.IsDeleted;
+                address = await _addressRepo.GetFilteredAddressAsync(addressExpr);
+                addressIds = address.Select(s => s.Id).ToList();
+            }
+
+            //Build the search expression for property level - property type. owner, rating and address
+            if (searchRequestModel.RequestModel.PropertyTypeId > 0 && searchRequestModel.RequestModel.OwnerId > 0 && !string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating) && addressIds.Count()>0)
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId 
+                                        && _.OwnerId == searchRequestModel.RequestModel.OwnerId 
+                                        && _.Rating == searchRequestModel.RequestModel.Rating 
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0 && searchRequestModel.RequestModel.OwnerId > 0 && !string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating))
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId 
+                                        && _.OwnerId == searchRequestModel.RequestModel.OwnerId
+                                        && _.Rating == searchRequestModel.RequestModel.Rating && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0 && searchRequestModel.RequestModel.OwnerId > 0 && addressIds.Count() > 0)
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId
+                                        && _.OwnerId == searchRequestModel.RequestModel.OwnerId
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0 && !string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating) && addressIds.Count() > 0)
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId
+                                        && _.Rating == searchRequestModel.RequestModel.Rating
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.OwnerId > 0 && !string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating) && addressIds.Count() > 0)
+            {
+                propertyExpr = _ => _.OwnerId == searchRequestModel.RequestModel.OwnerId
+                                        && _.Rating == searchRequestModel.RequestModel.Rating
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.OwnerId > 0 && !string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating))
+            {
+                propertyExpr = _ => _.OwnerId == searchRequestModel.RequestModel.OwnerId 
+                                        && _.Rating == searchRequestModel.RequestModel.Rating && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0 && !string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating))
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId 
+                                        && _.Rating == searchRequestModel.RequestModel.Rating && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0 && searchRequestModel.RequestModel.OwnerId > 0 )
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId 
+                                        && _.OwnerId == searchRequestModel.RequestModel.OwnerId && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0 && addressIds.Count() > 0)
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId 
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.OwnerId > 0 && addressIds.Count() > 0)
+            {
+                propertyExpr = _ => _.OwnerId == searchRequestModel.RequestModel.OwnerId 
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (!string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating) && addressIds.Count() > 0)
+            {
+                propertyExpr = _ => _.Rating == searchRequestModel.RequestModel.Rating 
+                                        && addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.PropertyTypeId > 0)
+            {
+                propertyExpr = _ => _.PropertyTypeId == searchRequestModel.RequestModel.PropertyTypeId && _.IsActive && !_.IsDeleted;
+            }
+            else if (searchRequestModel.RequestModel.OwnerId > 0)
+            {
+                propertyExpr = _ => _.OwnerId == searchRequestModel.RequestModel.OwnerId && _.IsActive && !_.IsDeleted;
+            }
+            else if (!string.IsNullOrEmpty(searchRequestModel.RequestModel.Rating))
+            {
+                propertyExpr = _ => _.Rating == searchRequestModel.RequestModel.Rating && _.IsActive && !_.IsDeleted;
+            }
+            else if (addressIds.Count() > 0)
+            {
+                propertyExpr = _ => addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
+            }
+
+            //get the properties based on the search expression
+            if (propertyExpr != null)
+                properties = await _repo.GetFilteredPropertyAsync(propertyExpr);
+            else
+                properties = await _repo.GetAllPropertyesAsync();
+            
+            propertyIds = properties.Select(s => s.Id).ToList();
+
+            //Get the propertyids based on facility search
+            if (searchRequestModel.RequestModel.PropertyFacilities.Count() > 0) 
+            {
+                propertyFaciltiyExpr = s => searchRequestModel.RequestModel.PropertyFacilities.Contains(s.FaciltiyId) && propertyIds.Contains(s.PropertyId) && s.IsActive && !s.IsDeleted;
+                propertyFacilities = await _propertyFacilityRepo.GetFilteredPropertyFacilityMappingAsync(propertyFaciltiyExpr);
+            }
+            else
+            {
+                propertyFaciltiyExpr = s => propertyIds.Contains(s.PropertyId) && s.IsActive && !s.IsDeleted;
+                propertyFacilities = await _propertyFacilityRepo.GetFilteredPropertyFacilityMappingAsync(propertyFaciltiyExpr);
+            }
+            propertyIds = propertyFacilities.Select(s => s.PropertyId).ToList();
+
+            propertyPolicyExpr = _ => propertyIds.Contains(_.PropertyId) && _.IsActive && !_.IsDeleted;
+            var propertyPolicies = await _propertyPolicyRepo.GetFilteredPropertyPolicyMappingAsync(propertyPolicyExpr);
+
+            //Get the availability
+            /*To Do*/
+
+
+            var searchedProperties = (from p in properties
+                                     join pf in propertyFacilities on p.Id equals pf.PropertyId into ppf
+                                     join pp in propertyPolicies on p.Id equals pp.PropertyId //into ppo
+                                     select new PropertySearchResponseModel
+                                     {
+                                         PropertyId = p.Id,
+                                         PropertyTypeId = p.PropertyTypeId,
+                                         PropertySubTypeId = p.PropertySubTypeId,
+                                         PropertyCancellationPolicy = pp.CancellationPolicy,
+                                         PropertyHouseRules = pp.HouseRules,
+                                         PropertyAddress = GetSearchedPropertyAdress(p.AddressId, address).Result,
+                                         PropertyContactEmail = p.ContactEmail,
+                                         PropertyContactAlternatePhoneNo = p.ContactAlternatePhoneNo,
+                                         PropertyContactPersonName = p.ContactPersonName,
+                                         PropertyContactPhoneNo = p.ContactPhoneNo,
+                                         PropertyName = p.Name,
+                                         PropertyOwnerId = p.OwnerId,
+                                         Property_No_Of_Rooms = p.No_Of_Rooms, 
+                                         //PropertyFacilities = GetPropertyFacilities(p.Id),
+                                         //PropertyImageUrls = GetPropertyImages(p.Id),
+                                         //PropertyRooms = GetProopertyRooms(p.Id)
+                                     }).ToList();
+            
+            var totalRows = searchedProperties.Count();
+            var totalPages = totalRows / searchRequestModel.PageSize + 1;
+
+            return new ApiResponse<PaginatedResponseModel<List<PropertySearchResponseModel>>>
+            {
+                Data = new PaginatedResponseModel<List<PropertySearchResponseModel>>
+                {
+                    CurrentPage = searchRequestModel.CurrentPage,
+                    PageSize = searchRequestModel.PageSize,
+                    ResponseModel = searchedProperties,
+                    TotalPages = totalPages,
+                    TotalRows = totalRows
+                },
+                Message = $"{totalRows.ToString()} properties found!!",
+                StatusCode = System.Net.HttpStatusCode.OK
+            };
+        }
+        private async Task<PropertySearchResponseAdrressModel> GetSearchedPropertyAdress(long AddressId, IEnumerable<AddressSnapshot> addresses =null)
+        {
+            PropertySearchResponseAdrressModel searchResponseAdrressModel = new PropertySearchResponseAdrressModel();
+            AddressSnapshot address = new AddressSnapshot();
+            if (addresses == null)
+            {
+                Expression<Func<AddressSnapshot, bool>> expr = _ => _.Id == AddressId && _.IsActive && !_.IsDeleted;
+                address = (await _addressRepo.GetFilteredAddressAsync(expr)).FirstOrDefault();
+            }
+            else
+                address = addresses.Where(s => s.Id == AddressId).FirstOrDefault();
+
+            Expression<Func<GoogleMapDetailsSnapshot, bool>> gmapExpr = _ => _.Id == AddressId && _.IsActive && !_.IsDeleted;
+            var googleMap = (await _gmapRepo.GetFilteredGoogleMapDetailsAsync(gmapExpr)).FirstOrDefault();
+
+            Expression<Func<Country_State_City_AreaSnapshot, bool>> areaExpr = _ => address.Country_State_City_Area_Ids.Contains(_.Id.ToString()) && _.IsActive;
+            var area = await _areaRepo.GetFilteredAreasAsync(areaExpr);
+
+            return new PropertySearchResponseAdrressModel 
+            {
+                AddressId = address.Id,
+                AddressLine1 = address.AddressLine1,
+                AddressLine2 = address.AddressLine2,
+                Landmark = address.Landmark,
+                Pincode = address.Pincode,
+                PostOffice = address.PostOffice,
+                GoogleMapDetails = new PropertySearchResponseGoogleMapDetailsModel { GoogleMapDetailId = googleMap.Id, Latitude = googleMap.Latitude, Longitude = googleMap.Longitude},
+                Areas = area.Select(s=> new PropertySearchResponseCountry_State_City_AreaModel 
+                {
+                    Id = s.Id,
+                    CountryId = s.CountryId,
+                    Country = s.CountryName,
+                    StateId = s.StateId,
+                    State = s.StateName,
+                    CityId = s.CityId,
+                    City = s.CityName,
+                    AreaId = s.AreaId,
+                    Area = s.AreaName
+                }).ToList()
+            }; 
         }
     }
 }

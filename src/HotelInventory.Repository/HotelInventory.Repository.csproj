@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HotelInventory.Core\HotelInventory.Core.csproj" />
     <ProjectReference Include="..\HotelInventory.DAL\HotelInventory.DAL.csproj" />
+    <ProjectReference Include="..\HotelInventory.Models\HotelInventory.Models.csproj" />
   </ItemGroup>
 
 </Project>
