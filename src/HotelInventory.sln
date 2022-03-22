@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31321.278
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.Core", "HotelInventory.Core\HotelInventory.Core.csproj", "{A41BCED2-DCC2-4547-B8D9-D80896C86F01}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelInventory.Core", "HotelInventory.Core\HotelInventory.Core.csproj", "{A41BCED2-DCC2-4547-B8D9-D80896C86F01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.DAL", "HotelInventory.DAL\HotelInventory.DAL.csproj", "{11F486B3-941E-4E0B-A497-662BA8A24E4B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelInventory.DAL", "HotelInventory.DAL\HotelInventory.DAL.csproj", "{11F486B3-941E-4E0B-A497-662BA8A24E4B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.Repository", "HotelInventory.Repository\HotelInventory.Repository.csproj", "{85A885F7-FBAD-45F7-A27C-7FEA483CB4BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelInventory.Repository", "HotelInventory.Repository\HotelInventory.Repository.csproj", "{85A885F7-FBAD-45F7-A27C-7FEA483CB4BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.Models", "HotelInventory.Models\HotelInventory.Models.csproj", "{CD141FB6-BD46-494F-A3B9-57918B882447}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelInventory.Models", "HotelInventory.Models\HotelInventory.Models.csproj", "{CD141FB6-BD46-494F-A3B9-57918B882447}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.WebApi", "HotelInventory.WebApi\HotelInventory.WebApi.csproj", "{3CD66DC5-732F-4C21-8A5F-F90525A3EFFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelInventory.WebApi", "HotelInventory.WebApi\HotelInventory.WebApi.csproj", "{3CD66DC5-732F-4C21-8A5F-F90525A3EFFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.Services", "HotelInventory.Services\HotelInventory.Services.csproj", "{F34E5688-8582-4373-BC6D-4A180C0039E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HotelInventory.Services", "HotelInventory.Services\HotelInventory.Services.csproj", "{F34E5688-8582-4373-BC6D-4A180C0039E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelInventory.Common", "HotelInventory.Common\HotelInventory.Common.csproj", "{07F6BC81-E1D8-4528-BF57-78074A098A9D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{F34E5688-8582-4373-BC6D-4A180C0039E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F34E5688-8582-4373-BC6D-4A180C0039E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F34E5688-8582-4373-BC6D-4A180C0039E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07F6BC81-E1D8-4528-BF57-78074A098A9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07F6BC81-E1D8-4528-BF57-78074A098A9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07F6BC81-E1D8-4528-BF57-78074A098A9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07F6BC81-E1D8-4528-BF57-78074A098A9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

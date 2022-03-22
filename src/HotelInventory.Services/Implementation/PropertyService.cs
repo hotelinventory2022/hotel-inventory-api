@@ -18,6 +18,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using HotelInventory.Common.Extensions;
 
 namespace HotelInventory.Services.Implementation
 {
@@ -28,6 +29,7 @@ namespace HotelInventory.Services.Implementation
         private IPropertyRepository _repo;
         private IPropertyFacilityMappingRepository _propertyFacilityRepo;
         private IPropertyPolicyMappingRepository _propertyPolicyRepo;
+        private IPropertyImageMappingRepository _propertyImageRepo;
         private IAddressRepository _addressRepo;
         private IGoogleMapDetailsRepository _gmapRepo;
         private IAreaRepository _areaRepo;
@@ -39,7 +41,7 @@ namespace HotelInventory.Services.Implementation
         private IRoomService _roomService;
         private IRoomFacilityMappingService _roomFacilityMappingService;
         public PropertyService(ILoggerManager logger, IMapper mapper, IPropertyRepository repo, IPropertyFacilityMappingRepository propertyFacilityRepo, IAddressRepository addressRepo,
-            IPropertyPolicyMappingRepository propertyPolicyRepo, IGoogleMapDetailsRepository gmapRepo, IAreaRepository areaRepo, IGoogleMapDetailsService gmapService, IAddressService addressService, 
+            IPropertyPolicyMappingRepository propertyPolicyRepo, IPropertyImageMappingRepository propertyImageRepo, IGoogleMapDetailsRepository gmapRepo, IAreaRepository areaRepo, IGoogleMapDetailsService gmapService, IAddressService addressService, 
             IPropertyFacilityMappingService propertyFacilityMappingService, IPropertyPolicyMappingService propertyPolicyMappingService, IPropertyImageMappingService propertImageMappingService, 
             IRoomService roomService, IRoomFacilityMappingService roomFacilityMappingService)
         {
@@ -49,6 +51,7 @@ namespace HotelInventory.Services.Implementation
             _propertyFacilityRepo = propertyFacilityRepo;
             _addressRepo = addressRepo;
             _propertyPolicyRepo = propertyPolicyRepo;
+            _propertyImageRepo = propertyImageRepo;
             _gmapRepo = gmapRepo;
             _areaRepo = areaRepo;
             _gmapService = gmapService;
@@ -388,6 +391,7 @@ namespace HotelInventory.Services.Implementation
             Expression<Func<PropertyFacilityMappingSnapshot, bool>> propertyFaciltiyExpr = null;
             Expression<Func<AddressSnapshot, bool>> addressExpr = null;
             Expression<Func<PropertyPolicyMappingSnapshot, bool>> propertyPolicyExpr = null;
+            Expression<Func<PropertyImageMappingSnapshot, bool>> propertyImageExpr = null;
 
             //See if address search is there, if present get the address ids
             if (searchRequestModel.RequestModel.Country_State_City_Area_Id > 0)
@@ -500,13 +504,17 @@ namespace HotelInventory.Services.Implementation
             propertyPolicyExpr = _ => propertyIds.Contains(_.PropertyId) && _.IsActive && !_.IsDeleted;
             var propertyPolicies = await _propertyPolicyRepo.GetFilteredPropertyPolicyMappingAsync(propertyPolicyExpr);
 
+            propertyImageExpr = _ => propertyIds.Contains(_.PropertyId) && _.IsActive && !_.IsDeleted;
+            var propertyImages = await _propertyImageRepo.GetFilteredPropertyImageMappingAsync(propertyImageExpr);
+
             //Get the availability
             /*To Do*/
 
 
             var searchedProperties = (from p in properties
                                      join pf in propertyFacilities on p.Id equals pf.PropertyId into ppf
-                                     join pp in propertyPolicies on p.Id equals pp.PropertyId //into ppo
+                                     join pp in propertyPolicies on p.Id equals pp.PropertyId
+                                     join pi in propertyImages on p.Id equals pi.PropertyId into ppi
                                      select new PropertySearchResponseModel
                                      {
                                          PropertyId = p.Id,
@@ -522,13 +530,20 @@ namespace HotelInventory.Services.Implementation
                                          PropertyName = p.Name,
                                          PropertyOwnerId = p.OwnerId,
                                          Property_No_Of_Rooms = p.No_Of_Rooms, 
-                                         //PropertyFacilities = GetPropertyFacilities(p.Id),
-                                         //PropertyImageUrls = GetPropertyImages(p.Id),
+                                         PropertyFacilities = ppf.Select(s=> new PropertySearchResponseFacilityModel { FacilityId = s.FaciltiyId, Facility = s.FaciltiyId.ToString()}).ToList(),
+                                         PropertyImageUrls = ppi.Select(s=>s.ImageUrl).ToList()
                                          //PropertyRooms = GetProopertyRooms(p.Id)
-                                     }).ToList();
+                                     });
             
             var totalRows = searchedProperties.Count();
             var totalPages = totalRows / searchRequestModel.PageSize + 1;
+            var orderBy = $"{searchRequestModel.SortBy} {searchRequestModel.SortOrder}";
+            var skipRecords = (searchRequestModel.CurrentPage - 1) * searchRequestModel.PageSize;
+            var responseData = searchedProperties
+                                .OrderBy(orderBy)
+                                .Skip(skipRecords)
+                                .Take(searchRequestModel.PageSize)
+                                .ToList();
 
             return new ApiResponse<PaginatedResponseModel<List<PropertySearchResponseModel>>>
             {
@@ -536,7 +551,7 @@ namespace HotelInventory.Services.Implementation
                 {
                     CurrentPage = searchRequestModel.CurrentPage,
                     PageSize = searchRequestModel.PageSize,
-                    ResponseModel = searchedProperties,
+                    ResponseModel = responseData,
                     TotalPages = totalPages,
                     TotalRows = totalRows
                 },
