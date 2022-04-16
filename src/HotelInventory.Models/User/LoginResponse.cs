@@ -10,6 +10,7 @@ namespace HotelInventory.Models.User
         public int Id { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
+        public int RoleId { get; set; }
         public string JwtToken { get; set; }
 
         //[JsonIgnore] // refresh token is returned in http only cookie

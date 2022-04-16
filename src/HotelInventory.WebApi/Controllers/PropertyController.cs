@@ -1,12 +1,15 @@
-﻿using HotelInventory.Models;
+﻿using HotelInventory.Common.Enums;
+using HotelInventory.Models;
 using HotelInventory.Models.Property;
 using HotelInventory.Services.Interfaces;
+using HotelInventory.WebApi.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace HotelInventory.WebApi.Controllers
@@ -36,8 +39,25 @@ namespace HotelInventory.WebApi.Controllers
         [Route("UploadPropertyByOwner")]
         public async Task<ApiResponse<bool>> UploadPropertyByOwner([FromBody] PropertyUploadRequestModel property)
         {
-            var res = await _propertyService.UploadPropertyByOwner(property);
-            return res;
+            int loggedInUserId = HttpContext.User.GetLoggedInUserId();
+            if (loggedInUserId > 0)
+            {
+                property.LoggedInUserId = loggedInUserId;
+                UserRole loggedInUserRole = (UserRole)HttpContext.User.GetLoggedInUserRoleId();
+                if (loggedInUserRole == UserRole.Owner)
+                {
+                    var res = await _propertyService.UploadPropertyByOwner(property);
+                    return res;
+                }
+                else
+                {
+                    return new ApiResponse<bool> { Data = false, StatusCode = System.Net.HttpStatusCode.Unauthorized, Message = "User doesn't have permission to upload property!!" };
+                }
+            }
+            else
+            {
+                return new ApiResponse<bool> { Data = false, StatusCode = System.Net.HttpStatusCode.Unauthorized, Message = "User is not valid!!" };
+            }
         }
     }
 }

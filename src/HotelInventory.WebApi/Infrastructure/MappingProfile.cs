@@ -63,6 +63,10 @@ namespace HotelInventory.WebApi.Infrastructure
 
             CreateMap<UserDTO, UserSnapshot>();
 
+            CreateMap<UserRoleSnapshot, UserRoleDTO>();
+
+            CreateMap<UserRoleDTO, UserRoleSnapshot>();
+
             CreateMap<AvailabiltyRateSnapshot, AvailabiltyDTO>();
 
             CreateMap<AvailabiltyDTO, AvailabiltyRateSnapshot>();

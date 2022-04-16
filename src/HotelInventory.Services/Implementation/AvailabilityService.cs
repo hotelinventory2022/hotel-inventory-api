@@ -61,12 +61,12 @@ namespace HotelInventory.Services.Implementation
                 listAvailabiltyDTOs = _mapper.Map<IEnumerable<AvailabiltyDTO>>(availibilty);
 
                 _logger.LogInfo($"Returned availibilty for owner {availabilty.OwnerId} from database ");
-                return new ApiResponse<IEnumerable<AvailabiltyDTO>> { Data = listAvailabiltyDTOs, StatusCode = System.Net.HttpStatusCode.OK, Message = "Returned all availibilty successfully from database." };
+                return new ApiResponse<IEnumerable<AvailabiltyDTO>> { Data = listAvailabiltyDTOs, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Returned availibilty for owner {availabilty.OwnerId}" };
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Something went wrong inside GetAllAvailibiltyAsync action: {ex.Message}");
-                return new ApiResponse<IEnumerable<AvailabiltyDTO>> { Data = null, StatusCode = System.Net.HttpStatusCode.InternalServerError, Message = "500 Internal Server Error - Something went wrong." };
+                return null;
             }
         }
         public async Task<ApiResponse<AvailabiltyDTO>> CreateOrUpdateAvailibilty(AvailabiltyRequestModel Availibilty)

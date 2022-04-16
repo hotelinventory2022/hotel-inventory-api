@@ -71,6 +71,9 @@ namespace HotelInventory.Models.Property
         public bool IsSlotBookingEnabled { get; set; }
         public int Max_No_Of_Adults { get; set; }
         public int Max_No_Of_Child { get; set; }
+        public bool IsFullDayRate { get; set; }
+        public int Duration_hrs { get; set; }
+        public int Tariff { get; set; }
         public List<PropertySearchResponseFacilityModel> RoomFacilities { get; set; }
         public List<string> RoomImageUrls { get; set; }
     }

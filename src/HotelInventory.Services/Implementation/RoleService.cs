@@ -27,7 +27,8 @@ namespace HotelInventory.Services.Implementation
         {
             try
             {
-                var roles = await _roleRepo.GetAllRolesAsync();
+                Expression<Func<RoleSnapshot, bool>> expr = _ => _.IsActive && !_.IsDeleted;
+                var roles = await _roleRepo.GetFilteredRoleAsync(expr);
                 _logger.LogInfo($"Returned all roles from database.");
 
                 var roleResult = _mapper.Map<IEnumerable<RoleDto>>(roles);
@@ -75,7 +76,7 @@ namespace HotelInventory.Services.Implementation
                 }
                 else
                 {
-                    Expression<Func<RoleSnapshot, bool>> filter = _ => _.Name.Trim().ToUpper() == roleName.Trim().ToUpper();
+                    Expression<Func<RoleSnapshot, bool>> filter = _ => _.Name.Trim().ToUpper() == roleName.Trim().ToUpper() && _.IsActive && !_.IsDeleted;
                     var roles = await _roleRepo.GetFilteredRoleAsync(filter);
                     if (roles.Count() == 0)
                     {

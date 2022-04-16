@@ -13,6 +13,7 @@ namespace HotelInventory.Models.User
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public DateTime DOB { get; set; }
+        public int RoleId { get; set; }
         public bool IsEmailVerified { get; set; }
         public bool IsPhoneVerified { get; set; }
         public bool IsSubscribedForNewsletter { get; set; }

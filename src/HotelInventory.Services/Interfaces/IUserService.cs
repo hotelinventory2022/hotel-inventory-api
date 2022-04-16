@@ -15,5 +15,6 @@ namespace HotelInventory.Services.Interfaces
         Task<ApiResponse<bool>> DeleteUser(int UserId);
         Task<ApiResponse<LoginResponse>> AuthenticateUser(LoginRequest request);
         Task<ApiResponse<UserDTO>> RegisterUser(RegisterRequest request);
+
     }
 }

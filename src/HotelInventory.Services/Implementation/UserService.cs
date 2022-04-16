@@ -24,12 +24,14 @@ namespace HotelInventory.Services.Implementation
         private ILoggerManager _logger;
         private IMapper _mapper;
         private IUserRepository _repo;
+        private IUserRoleRepository _userRoleRepo;
         private readonly AppSettings _appSettings;
-        public UserService(ILoggerManager logger, IMapper mapper, IUserRepository repo, IOptions<AppSettings> appSettings)
+        public UserService(ILoggerManager logger, IMapper mapper, IUserRepository repo, IUserRoleRepository userRoleRepo, IOptions<AppSettings> appSettings)
         {
             _logger = logger;
             _mapper = mapper;
             _repo = repo;
+            _userRoleRepo = userRoleRepo;
             _appSettings = appSettings.Value;
         }
         public async Task<ApiResponse<IEnumerable<UserDTO>>> GetAllUsersAsync()
@@ -145,8 +147,11 @@ namespace HotelInventory.Services.Implementation
                 else
                 {
                     var existingUser = _mapper.Map<UserDTO>(existingObj.FirstOrDefault());
+                    Expression<Func<UserRoleSnapshot, bool>> userRolefilter = _ => _.UserId == existingUser.Id && _.RoleId == request.RoleId;
+                    var existingUserRoleObj = await _userRoleRepo.GetFilteredUserRolesAsync(userRolefilter);
+                    var existingUserRole = _mapper.Map<UserRoleDTO>(existingUserRoleObj.FirstOrDefault());
                     // authentication successful so generate jwt and refresh tokens
-                    var jwtToken = generateJwtToken(existingUser);
+                    var jwtToken = generateJwtToken(existingUser, existingUserRole);
                     _logger.LogInfo($"Authenticated User with id: {existingUser.Id.ToString()}");
                     return new ApiResponse<LoginResponse> 
                     { 
@@ -155,10 +160,11 @@ namespace HotelInventory.Services.Implementation
                             Id= existingUser.Id,
                             Name= existingUser.Name,
                             Email = existingUser.Email,
+                            RoleId = existingUserRole.RoleId,
                             JwtToken = jwtToken
                         }, 
                         StatusCode = System.Net.HttpStatusCode.OK, 
-                        Message = $"Succesfully authenticated User with id: {existingUser.Id.ToString()}" };
+                        Message = $"Succesfully authenticated User : {existingUser.Name}" };
                 }
             }
             catch (Exception ex)
@@ -213,6 +219,22 @@ namespace HotelInventory.Services.Implementation
                     await _repo.CreateUser(UserEntity);
                     createdObj = _mapper.Map<UserDTO>(UserEntity);
                     _logger.LogInfo($"Succesfully created User with id {createdObj.Id.ToString()}.");
+
+                    var userRoleDTO = new UserRoleDTO
+                    {
+                        UserId = createdObj.Id,
+                        RoleId = request.RoleId,
+                        IsActive = true,
+                        IsDeleted = false,
+                        CreatedBy = loggedInUser,
+                        CreatedOn = now,
+                        LastUpdatedBy = loggedInUser,
+                        LastUpdatedOn = now
+                    };
+                    var userRoleEntity = _mapper.Map<UserRoleSnapshot>(userRoleDTO);
+                    await _userRoleRepo.CreateUserRole(userRoleEntity);
+                    var createdUserRoleObj = _mapper.Map<UserRoleDTO>(userRoleEntity);
+                    _logger.LogInfo($"Succesfully created User Role with id {createdUserRoleObj.Id.ToString()}.");
                     return new ApiResponse<UserDTO> { Data = createdObj, StatusCode = System.Net.HttpStatusCode.OK, Message = $"Succesfully created User with id {createdObj.Id.ToString()}." };
                 }
                 else
@@ -223,13 +245,13 @@ namespace HotelInventory.Services.Implementation
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Something went wrong inside DeleteUser action: {ex.Message}");
+                _logger.LogError($"Something went wrong inside RegisterUser action: {ex.Message}");
                 return new ApiResponse<UserDTO> { Data = null, StatusCode = System.Net.HttpStatusCode.InternalServerError, Message = "500 Internal Server Error - Something went wrong." };
             }
         }
         
         #region Helper methods
-        private string generateJwtToken(UserDTO user)
+        private string generateJwtToken(UserDTO user, UserRoleDTO userRole)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.JwTSecret);
@@ -237,7 +259,9 @@ namespace HotelInventory.Services.Implementation
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Id.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, userRole.RoleId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_appSettings.JwTExpiration),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)

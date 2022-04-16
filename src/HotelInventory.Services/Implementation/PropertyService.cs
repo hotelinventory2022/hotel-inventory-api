@@ -33,6 +33,8 @@ namespace HotelInventory.Services.Implementation
         private IAddressRepository _addressRepo;
         private IGoogleMapDetailsRepository _gmapRepo;
         private IAreaRepository _areaRepo;
+        private IRoomRepository _roomRepo;
+        private IAvailabilityService _availabilityService;
         private IGoogleMapDetailsService _gmapService;
         private IAddressService _addressService;
         private IPropertyFacilityMappingService _propertyFacilityMappingService;
@@ -41,9 +43,10 @@ namespace HotelInventory.Services.Implementation
         private IRoomService _roomService;
         private IRoomFacilityMappingService _roomFacilityMappingService;
         public PropertyService(ILoggerManager logger, IMapper mapper, IPropertyRepository repo, IPropertyFacilityMappingRepository propertyFacilityRepo, IAddressRepository addressRepo,
-            IPropertyPolicyMappingRepository propertyPolicyRepo, IPropertyImageMappingRepository propertyImageRepo, IGoogleMapDetailsRepository gmapRepo, IAreaRepository areaRepo, IGoogleMapDetailsService gmapService, IAddressService addressService, 
-            IPropertyFacilityMappingService propertyFacilityMappingService, IPropertyPolicyMappingService propertyPolicyMappingService, IPropertyImageMappingService propertImageMappingService, 
-            IRoomService roomService, IRoomFacilityMappingService roomFacilityMappingService)
+            IPropertyPolicyMappingRepository propertyPolicyRepo, IPropertyImageMappingRepository propertyImageRepo, IGoogleMapDetailsRepository gmapRepo, IAreaRepository areaRepo, IRoomRepository roomRepo,
+            IAvailabilityService availabilityService, IGoogleMapDetailsService gmapService, IAddressService addressService, IPropertyFacilityMappingService propertyFacilityMappingService, 
+            IPropertyPolicyMappingService propertyPolicyMappingService, IPropertyImageMappingService propertImageMappingService, IRoomService roomService, 
+            IRoomFacilityMappingService roomFacilityMappingService)
         {
             _logger = logger;
             _mapper = mapper;
@@ -54,6 +57,7 @@ namespace HotelInventory.Services.Implementation
             _propertyImageRepo = propertyImageRepo;
             _gmapRepo = gmapRepo;
             _areaRepo = areaRepo;
+            _roomRepo = roomRepo;
             _gmapService = gmapService;
             _addressService = addressService;
             _propertyFacilityMappingService = propertyFacilityMappingService;
@@ -182,6 +186,7 @@ namespace HotelInventory.Services.Implementation
         public async Task<ApiResponse<bool>> UploadPropertyByOwner(PropertyUploadRequestModel model)
         {
             var now = DateTime.Now;
+           
             try
             {
                 if (model == null)
@@ -482,7 +487,7 @@ namespace HotelInventory.Services.Implementation
                     propertyExpr = _ => addressIds.Contains(_.AddressId) && _.IsActive && !_.IsDeleted;
                 }
 
-                //get the properties based on the search expression
+                //Get the properties based on the search expression
                 if (propertyExpr != null)
                     properties = await _repo.GetFilteredPropertyAsync(propertyExpr);
                 else
@@ -511,7 +516,13 @@ namespace HotelInventory.Services.Implementation
 
                 //Get the availability
                 /*To Do*/
-
+                var availability = await _availabilityService.GetAvailibiltyAsync(new AvailabiltyRequestModel 
+                { 
+                    OwnerId = searchRequestModel.RequestModel.OwnerId, 
+                    PropertyIds = propertyIds, 
+                    StartDate =  searchRequestModel.RequestModel.Check_In_Date,
+                    EndDate = searchRequestModel.RequestModel.Check_Out_Date
+                });
 
                 var searchedProperties = (from p in properties
                                           join pf in propertyFacilities on p.Id equals pf.PropertyId into ppf
@@ -533,8 +544,8 @@ namespace HotelInventory.Services.Implementation
                                               PropertyOwnerId = p.OwnerId,
                                               Property_No_Of_Rooms = p.No_Of_Rooms,
                                               PropertyFacilities = ppf.Select(s => new PropertySearchResponseFacilityModel { FacilityId = s.FaciltiyId, Facility = s.FaciltiyId.ToString() }).ToList(),
-                                              PropertyImageUrls = ppi.Select(s => s.ImageUrl).ToList()
-                                              //PropertyRooms = GetProopertyRooms(p.Id)
+                                              PropertyImageUrls = ppi.Select(s => s.ImageUrl).ToList(),
+                                              PropertyRooms = GetProopertyRooms(p.Id, availability.Data).Result
                                           });
 
                 var totalRows = searchedProperties.Count();
@@ -568,6 +579,8 @@ namespace HotelInventory.Services.Implementation
                 return new ApiResponse<PaginatedResponseModel<List<PropertySearchResponseModel>>> { Data = null, StatusCode = System.Net.HttpStatusCode.InternalServerError, Message = "500 Internal Server Error - Something went wrong." };
             }
         }
+
+        #region Helpers
         private async Task<PropertySearchResponseAdrressModel> GetSearchedPropertyAdress(long AddressId, IEnumerable<AddressSnapshot> addresses =null)
         {
             try
@@ -617,5 +630,48 @@ namespace HotelInventory.Services.Implementation
                 return null;
             }
         }
+
+        private async Task<List<PropertySearchResponseRoomModel>> GetProopertyRooms(int PropertyId, IEnumerable<AvailabiltyDTO> availabilties = null)
+        {
+            Expression<Func<RoomSnapshot, bool>> roomExpr = _ => _.PropertyId == PropertyId;
+            var rooms = await _roomRepo.GetFilteredRoomAsync(roomExpr);
+            var roomIds = rooms.Select(_ => _.Id);
+            var propertyAvailabilties = availabilties.Where(s => roomIds.Contains(s.RoomId));
+            try
+            {
+                List<PropertySearchResponseRoomModel> res = new List<PropertySearchResponseRoomModel>();
+                foreach (var availability in propertyAvailabilties)
+                {
+                    var room = rooms.Where(_ => _.Id == availability.RoomId).FirstOrDefault();
+                    res.Add(new PropertySearchResponseRoomModel
+                    {
+                        Id = room.Id,
+                        Name = room.Name,
+                        RoomTypeId = room.RoomTypeId,
+                        RoomType = room.RoomTypeId.ToString(),
+                        RoomSubTypeId = room.RoomSubTypeId,
+                        RoomSubType = room.RoomSubTypeId.ToString(),
+                        RoomSize = room.RoomSize,
+                        IsSlotBookingEnabled = room.IsSlotBookingEnabled,
+                        Max_No_Of_Adults = room.Max_No_Of_Adults,
+                        Max_No_Of_Child = room.Max_No_Of_Child,
+                        Check_In_Time = room.Check_In_Time,
+                        Check_Out_Time = room.Check_Out_Time,
+                        IsFullDayRate = availability.IsFullDayRate,
+                        Duration_hrs = availability.Duration_hrs,
+                        Tariff = availability.Tariff,
+                        //RoomFacilities = ,
+                        //RoomImageUrls = 
+                    });
+                }
+                return res;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Something went wrong inside GetProopertyRooms action: {ex.Message}");
+                return null;
+            }
+        }
+        #endregion
     }
 }
